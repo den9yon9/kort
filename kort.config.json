@@ -2,10 +2,6 @@
   "http://114.55.7.123:3000/deng.yong/kort.git",
   {
     "origin": "http://114.55.7.123:3000/deng.yong/page-ci-admin.git",
-    "branch": "dev"
-  },
-  {
-    "origin": "http://114.55.7.123:3000/deng.yong/page-ci-admin.git",
-    "branch": ["master","dev"]
+    "branches": ["master"]
   }
 ]
