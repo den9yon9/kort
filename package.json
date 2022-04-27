@@ -4,8 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "kort": "ts-node ./src/cli/kort.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/minimist": "^1.2.2",
+    "@types/node": "^17.0.29",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.3"
+  },
+  "dependencies": {
+    "minimist": "^1.2.6",
+    "uri-js": "^4.4.1"
+  }
 }

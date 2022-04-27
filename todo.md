@@ -19,3 +19,13 @@
 [ ] markdown
 
 [ ] 服务层(定时&接受push)
+
+[ ] kort-cli
+
+kort reload --config kort.config.json  // 根据配置更新工作区
+
+kort build --workspace path/to/workspace // 更新并打包某个工作区的最新提交
+
+kort build --project path/to/project
+
+kort log --workspace path/to/workspace // 查看日志
