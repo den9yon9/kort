@@ -1,21 +1,13 @@
 // 分析项目是否需要打包 & 要使用的包管理器
 
 import { PathLike } from 'fs'
-import { access, readFile } from 'fs/promises'
+import { access } from 'fs/promises'
 import { resolve } from 'path'
 
 function isFileExist(path: PathLike) {
   return access(path)
     .then(() => Promise.resolve(true))
     .catch(() => Promise.resolve(false))
-}
-
-export async function isProjectNeedBuild(projectPath: string) {
-  const pkgData = await readFile(resolve(projectPath, 'package.json'), {
-    encoding: 'utf-8'
-  })
-  const pkgInfo = JSON.parse(pkgData)
-  return Boolean(pkgInfo.scripts.build)
 }
 
 const lockFileMap = [
@@ -33,7 +25,7 @@ const lockFileMap = [
   }
 ]
 
-export async function getProjectPkgManager(projectPath: string) {
+export default async function getProjectPkgManager(projectPath: string) {
   const lockfiles = await Promise.all(
     lockFileMap.map(async ({ pkgManager, lockfile }) => {
       const ifExist = await isFileExist(resolve(projectPath, lockfile))

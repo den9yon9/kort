@@ -3,6 +3,6 @@ export interface Workspace {
   branches: string[]
   webhook?: string
   path: string
-  source: string
-  dist: string
+  readonly source: string
+  readonly dist: string
 }
