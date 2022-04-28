@@ -93,7 +93,7 @@ export default async function setup(workspaces: Workspace[]) {
     console.log(
       green(
         `\n${fulfilled.length}个个仓库设置成功:\n${fulfilled
-          .map((item: any) => item.value.origin)
+          .map((item: PromiseFulfilledResult<Workspace>) => item.value.origin)
           .join('\n')}\n`
       )
     )
@@ -102,8 +102,10 @@ export default async function setup(workspaces: Workspace[]) {
     console.log(
       red(
         `\n${rejected.length}个仓库设置失败: \n${rejected
-          .map((item: any) => item.reason)
+          .map((item: PromiseRejectedResult) => item.reason)
           .join('\n')}\n`
       )
     )
+
+  if (rejected.length !== 0) throw new Error('服务启动失败')
 }

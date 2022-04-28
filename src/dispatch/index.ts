@@ -14,7 +14,7 @@ export default class Dispatcher {
     else this.currentTask = null
   }
 
-  static async handle(task: Task) {
+  private static async handle(task: Task) {
     // 1. 解析task的workspace
     // 2. pull task的workspace
     // 3. 获取task对应的projects

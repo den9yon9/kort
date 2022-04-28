@@ -3,7 +3,7 @@
 import { join } from 'path'
 import loader from './loader'
 import { Workspace } from '../types/index'
-import { parseOrigin } from 'src/utils'
+import { parseOrigin } from '../utils'
 
 export default function parser(configPath: string): Workspace[] {
   const config = loader(configPath)
