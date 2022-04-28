@@ -1,6 +1,6 @@
 import { mkdir } from 'fs/promises'
 import { green, red, yellow } from 'kolorist'
-import { Workspace } from '../types/idnex'
+import { Workspace } from '../types/index'
 import {
   $,
   isBranchExist,
