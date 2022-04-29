@@ -7,6 +7,9 @@ import { rm, mkdir, rename } from 'fs/promises'
 
 const $ = promisify(exec)
 
+const kortRoot = join(process.env.HOME as string, '.kort')
+const kortReleaseRoot = join(process.env.HOME as string, 'kort-release')
+
 export default class Workspace {
   origin: string
   branches: string[]
@@ -14,13 +17,15 @@ export default class Workspace {
   hostname: string
   pathname: string
   path: string
+  releasePath: string
   constructor(origin: string, branches: string[], webhook?: string) {
     this.origin = origin
     this.branches = branches
     this.webhook = webhook
     const { hostname, pathname } = parseOrigin(origin)
     if (!hostname || !pathname) throw new Error(`origin: ${origin}格式错误`)
-    this.path = join(process.env.HOME as string, '.kort', pathname)
+    this.path = join(kortRoot, pathname)
+    this.releasePath = join(kortReleaseRoot, pathname)
   }
 
   get source() {
