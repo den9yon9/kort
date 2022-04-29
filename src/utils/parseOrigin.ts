@@ -7,7 +7,7 @@ function transOrigin(origin: string) {
   else return origin
 }
 
-export function parseOrigin(origin: string) {
+export default function parseOrigin(origin: string) {
   const cookedOrigin = transOrigin(origin)
   const { hostname, pathname } = new URL(cookedOrigin)
   return {

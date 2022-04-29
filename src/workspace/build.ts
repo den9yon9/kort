@@ -2,7 +2,7 @@ import { exec } from 'child_process'
 import { promisify } from 'util'
 import { readFile } from 'fs/promises'
 import { resolve } from 'path'
-import getProjectPkgManager from './getProjectPkgManager'
+import getProjectPkgManager from '../utils/getProjectPkgManager'
 const $ = promisify(exec)
 
 const installMap = {

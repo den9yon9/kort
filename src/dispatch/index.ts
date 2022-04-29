@@ -1,5 +1,5 @@
+import parseOrigin from '../utils/parseOrigin'
 import type Workspace from '../workspace/workspace'
-import { parseOrigin } from 'src/utils'
 export default class Dispatcher {
   private workspaces: Workspace[]
   private currentTask: Task | null = null
@@ -30,9 +30,12 @@ export default class Dispatcher {
   }
 
   private async handle(task: Task) {
-    // 1. 解析出task的workspace
+    // TODO: 1. 通知开始打包
+    // 2. 解析出task的workspace
     const workspace = this.findWorkspaceByOrigin(task.origin)
-    // 2. workspace 打包任务
-    workspace.buildTask(task)
+    // 3. workspace 打包任务
+    const result = await workspace.handleTask(task)
+    // TODO: 4. 通知打包结果
+    this.dispatch()
   }
 }

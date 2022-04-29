@@ -1,8 +1,9 @@
-import { join } from 'path'
-import { parseOrigin } from '../utils'
+import { dirname, join } from 'path'
 import { promisify } from 'util'
 import { exec } from 'child_process'
 import buildProjects from './build'
+import parseOrigin from 'src/utils/parseOrigin'
+import { rm, mkdir, rename } from 'fs/promises'
 
 const $ = promisify(exec)
 
@@ -43,8 +44,40 @@ export default class Workspace {
     return projects
   }
 
-  async buildTask(task: Task) {
+  async handleTask(task: Task) {
     const projects = await this.getProjectsByTask(task)
-    const result = buildProjects(projects)
+    const result = await buildProjects(projects)
+    await this.mvProjectsDist(
+      task,
+      result.filter((item) => item.success).map((item) => item.projectPath)
+    )
+    await this.commitDist(task)
+    return result
+  }
+
+  // 剪切task打出的dist到page-dist仓库
+  private async mvProjectsDist(task: Task, projects: string[]) {
+    await $(`git checkout ${task.branch}`, { cwd: this.dist })
+    await Promise.all(
+      projects.map(async (item) => {
+        const projectDist = join(item, 'dist')
+        const targetDist = item.replace(this.source, this.dist)
+        await rm(targetDist, { recursive: true, force: true })
+        await mkdir(dirname(targetDist), { recursive: true })
+        await rename(projectDist, targetDist)
+      })
+    )
+  }
+
+  // 提交task对应的page-dist
+  private async commitDist(task: Task) {
+    // 工作区不干净才去提交代码
+    const { stdout } = await $(`git status`, { cwd: this.dist })
+    if (!stdout.includes('working tree clean')) {
+      await $(`git add .`, { cwd: this.dist })
+      await $(`git commit -m 'sender: ${task}'`, { cwd: this.dist })
+    } else {
+      throw new Error('dist无更新: 你的任务可能无需打包')
+    }
   }
 }
