@@ -1,23 +1,38 @@
-import { Task } from 'src/types/index'
-
+import type Workspace from '../workspace/workspace'
+import { parseOrigin } from 'src/utils'
 export default class Dispatcher {
-  private static currentTask: Task | null = null
-  private static queue: Task[] = []
-  static register(task: Task) {
-    this.queue.push(task)
-    if (this.currentTask === null) this.next()
+  private workspaces: Workspace[]
+  private currentTask: Task | null = null
+  private queue: Task[] = []
+
+  constructor(workspaces: Workspace[]) {
+    this.workspaces = workspaces
   }
 
-  private static next() {
+  findWorkspaceByOrigin(origin: string) {
+    const { hostname, pathname } = parseOrigin(origin)
+    const workspace = this.workspaces.find(
+      (item) => item.hostname === hostname && item.pathname === pathname
+    )
+    if (!workspace) throw new Error(`未找到此任务对应的工作区`)
+    return workspace
+  }
+
+  register(task: Task) {
+    this.queue.push(task)
+    if (this.currentTask === null) this.dispatch()
+  }
+
+  private dispatch() {
     const task = this.queue.pop()
     if (task) this.handle(task)
     else this.currentTask = null
   }
 
-  private static async handle(task: Task) {
-    // 1. 解析task的workspace
-    // 2. pull task的workspace
-    // 3. 获取task对应的projects
-    // 4. 打包
+  private async handle(task: Task) {
+    // 1. 解析出task的workspace
+    const workspace = this.findWorkspaceByOrigin(task.origin)
+    // 2. workspace 打包任务
+    workspace.buildTask(task)
   }
 }

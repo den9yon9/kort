@@ -1,0 +1,7 @@
+POST http://localhost:3008?name=yong&age=12 HTTP/1.1
+content-type: application/json
+
+{
+  "gender": "male"
+}
+

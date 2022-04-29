@@ -3,6 +3,7 @@ import app from '../server'
 import configuration from '../configuration'
 import setup from '../environment/setup'
 import { green } from 'kolorist'
+import Dispatcher from '../dispatch'
 
 const argv = minimist(process.argv.slice(2), { string: ['_'] })
 
@@ -14,7 +15,7 @@ const workspaces = configuration(config)
 
 ;(async () => {
   await setup(workspaces)
-  app.context.workspaces = workspaces
+  app.context.dispatcher = new Dispatcher(workspaces)
   app.listen(+port)
   console.log(green(`服务已启动于${port}端口`))
 })()
