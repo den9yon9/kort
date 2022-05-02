@@ -4,6 +4,7 @@ import { exec } from 'child_process'
 import buildProjects from './build'
 import parseOrigin from 'src/utils/parseOrigin'
 import { rm, mkdir, rename } from 'fs/promises'
+import { gitlog, gitshow } from 'src/utils/git'
 
 const $ = promisify(exec)
 
@@ -35,11 +36,15 @@ export default class Workspace {
     return join(this.path, 'dist')
   }
 
+  compare(selector) {
+    return gitlog(selector, this.source)
+  }
+
   private async getProjectsByTask(task: Task) {
     await $(`git checkout ${task.branch}`, { cwd: task.branch })
     await $('git pull', { cwd: this.source })
     const { stdout } = await $(
-      `pnpm ls --depth -1 --json --filter [${task.compare}]`,
+      `pnpm ls --depth -1 --json --filter [${task.selector}]`,
       { cwd: this.source }
     )
     const projects = JSON.parse(`[${stdout.replace(/]\n\[/g, '],[')}]`)

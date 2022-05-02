@@ -1,7 +1,7 @@
 import * as minimist from 'minimist'
 import app from '../server'
 import configuration from '../configuration'
-import setup from '../environment/setup'
+import setup from '../environment'
 import { green } from 'kolorist'
 import Dispatcher from '../dispatch'
 
