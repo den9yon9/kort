@@ -1,3 +1,5 @@
+import { Task } from 'src/types'
+import webhook from 'src/webhook'
 import parseOrigin from '../utils/parseOrigin'
 import type Workspace from '../workspace/workspace'
 export default class Dispatcher {
@@ -11,6 +13,7 @@ export default class Dispatcher {
 
   findWorkspaceByOrigin(origin: string) {
     const { hostname, pathname } = parseOrigin(origin)
+    console.log(hostname, pathname, this.workspaces)
     const workspace = this.workspaces.find(
       (item) => item.hostname === hostname && item.pathname === pathname
     )
@@ -30,12 +33,8 @@ export default class Dispatcher {
   }
 
   private async handle(task: Task) {
-    // TODO: 1. 通知开始打包
-    // 2. 解析出task的workspace
-    const workspace = this.findWorkspaceByOrigin(task.origin)
-    // 3. workspace 打包任务
-    const result = await workspace.handleTask(task)
-    // TODO: 4. 通知打包结果
+    const workspace = this.findWorkspaceByOrigin(task.origin) 
+    await workspace.handleTask(task)
     this.dispatch()
   }
 }

@@ -11,37 +11,22 @@ const installMap = {
   pnpm: 'pnpm install --frozen-lockfile'
 }
 
-async function checkProjectNeedBuild(projectPath: string) {
-  const pkgData = await readFile(resolve(projectPath, 'package.json'), {
+async function checkProjectNeedBuild(project: string) {
+  const pkgData = await readFile(resolve(project, 'package.json'), {
     encoding: 'utf-8'
   })
   const pkgInfo = JSON.parse(pkgData)
-  if (!pkgInfo.scripts.build) throw new Error(`${projectPath}没有提供build脚本`)
+  if (!pkgInfo.scripts.build) throw new Error(`${project}没有提供build脚本`)
 }
 
-async function installProject(projectPath: string) {
-  const pkgManager = await getProjectPkgManager(projectPath)
+async function installProject(project: string) {
+  const pkgManager = await getProjectPkgManager(project)
   const install = installMap[pkgManager]
-  await $(install, { cwd: projectPath })
+  await $(install, { cwd: project })
 }
 
-async function buildProject(projectPath: string) {
-  await installProject(projectPath)
-  await checkProjectNeedBuild(projectPath)
-  await $(`pnpm build`, { cwd: projectPath })
-}
-
-// 批量打包项目
-export default function buildProjects(projectPaths: string[]) {
-  return Promise.all(
-    projectPaths.map((projectPath) =>
-      buildProject(projectPath)
-        .then(() => ({ success: true, projectPath }))
-        .catch((err) => ({
-          success: false,
-          projectPath,
-          reason: err.message
-        }))
-    )
-  )
+export default async function buildProject(project: string) {
+  await installProject(project)
+  await checkProjectNeedBuild(project)
+  await $(`pnpm build`, { cwd: project })
 }

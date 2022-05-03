@@ -1,10 +1,12 @@
 import { dirname, join } from 'path'
 import { promisify } from 'util'
 import { exec } from 'child_process'
-import buildProjects from './build'
-import parseOrigin from 'src/utils/parseOrigin'
+import buildProject from './build'
+import parseOrigin from '../utils/parseOrigin'
 import { rm, mkdir, rename } from 'fs/promises'
-import { gitlog, gitshow } from 'src/utils/git'
+import { gitlog } from '../utils/git'
+import notice from '../webhook'
+import { ProjectWithState, Task } from '../types'
 
 const $ = promisify(exec)
 
@@ -25,6 +27,8 @@ export default class Workspace {
     this.webhook = webhook
     const { hostname, pathname } = parseOrigin(origin)
     if (!hostname || !pathname) throw new Error(`origin: ${origin}格式错误`)
+    this.hostname = hostname
+    this.pathname = pathname
     this.path = join(kortRoot, pathname)
     this.releasePath = join(kortReleaseRoot, pathname)
   }
@@ -40,43 +44,75 @@ export default class Workspace {
     return gitlog(selector, this.source)
   }
 
-  private async getProjectsByTask(task: Task) {
-    await $(`git checkout ${task.branch}`, { cwd: task.branch })
-    await $('git pull', { cwd: this.source })
+  private async getProjects(compare: string) {
     const { stdout } = await $(
-      `pnpm ls --depth -1 --json --filter [${task.selector}]`,
+      `pnpm ls --depth -1 --json --filter [${compare}]`,
       { cwd: this.source }
     )
     const projects = JSON.parse(`[${stdout.replace(/]\n\[/g, '],[')}]`)
       .flat()
-      .map((item) => item.path) as string[]
+      .map((item) => item.path)
 
-    return projects
+    return projects as string[]
   }
 
   async handleTask(task: Task) {
-    const projects = await this.getProjectsByTask(task)
-    const result = await buildProjects(projects)
-    await this.mvProjectsDist(
-      task,
-      result.filter((item) => item.success).map((item) => item.projectPath)
-    )
-    await this.commitDist(task)
-    return result
-  }
+    await $(`git checkout ${task.branch}`, { cwd: this.source })
+    await $('git pull', { cwd: this.source })
+    const projects = await this.getProjects(task.compare)
+    const commits = await this.compare(task.compare)
 
-  // 剪切task打出的dist到page-dist仓库
-  private async mvProjectsDist(task: Task, projects: string[]) {
-    await $(`git checkout ${task.branch}`, { cwd: this.dist })
-    await Promise.all(
-      projects.map(async (item) => {
-        const projectDist = join(item, 'dist')
-        const targetDist = item.replace(this.source, this.dist)
-        await rm(targetDist, { recursive: true, force: true })
-        await mkdir(dirname(targetDist), { recursive: true })
-        await rename(projectDist, targetDist)
+    notice(this.webhook, {
+      stage: 'end',
+      repository: `${this.hostname}${this.pathname}`,
+      branch: task.branch,
+      compare: task.compare,
+      commits: commits.map((item) => item.subject),
+      projects: projects.map((item) => ({ project: item, state: 'pending' }))
+    })
+
+    const result = await Promise.all(
+      projects.map(async (project) => {
+        try {
+          await buildProject(project)
+          const projectDist = join(project, 'dist')
+          const targetDist = project.replace(this.source, this.dist)
+          await rm(targetDist, { recursive: true, force: true })
+          await mkdir(dirname(targetDist), { recursive: true })
+          await rename(projectDist, targetDist)
+          return { project: project, state: 'fulfilled' } as ProjectWithState
+        } catch (err) {
+          return {
+            state: 'rejected',
+            project: project,
+            reason: err.message
+          } as ProjectWithState
+        }
       })
     )
+
+    notice(this.webhook, {
+      stage: 'end',
+      repository: this.pathname,
+      branch: task.branch,
+      compare: task.compare,
+      commits,
+      projects: result
+    })
+
+    try {
+      await this.commitDist(task)
+    } catch (err) {
+      notice(this.webhook, {
+        stage: 'err',
+        repository: this.pathname,
+        branch: task.branch,
+        compare: task.compare,
+        commits,
+        projects: result
+      })
+    }
+    // TODO: 发布任务
   }
 
   // 提交task对应的page-dist

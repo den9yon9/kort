@@ -6,13 +6,14 @@ const app = new Koa<Koa.DefaultState, { dispatcher: Dispatcher }>()
 
 app.use(koaBody())
 
-app.use((ctx, next) => {
-  if ((ctx.request.method = 'post')) {
-    // TODO: 验证body是否为Task
-    ctx.dispatcher.register(ctx.request.body)
-  }
+app.use((ctx) => {
+  if (ctx.request.method.toLowerCase() !== 'post') return
+  const data = ctx.request.body
+  // TODO: 格式化task
+  const task = data
+
+  ctx.dispatcher.register(task)
   ctx.body = '任务已接受,等待处理'
-  next()
 })
 
 export default app
