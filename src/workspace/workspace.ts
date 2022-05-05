@@ -96,7 +96,8 @@ export default class Workspace {
       )
 
       await this.commitDist(task)
-      // TODO: 发布任务
+
+      await $('git pull', { cwd: join(this.releasePath, task.branch) })
 
       await notice(this.webhook, {
         title: '发布成功',

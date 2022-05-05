@@ -1,5 +1,6 @@
 import { mkdir } from 'fs/promises'
 import { green, red, yellow } from 'kolorist'
+import { dirname, join } from 'path'
 import type Workspace from '../workspace/workspace'
 import {
   $,
@@ -80,6 +81,27 @@ export default async function setup(workspaces: Workspace[]) {
           }
         })
       )
+
+      // 准备发布仓库
+      if (!(await isFileExist(workspace.releasePath))) {
+        await mkdir(workspace.releasePath, { recursive: true })
+        log(`release目录创建完成 `)
+      }
+      await Promise.all(
+        // 克隆dist仓库为release仓库
+        workspace.branches.map(async (branch) => {
+          const releaseBranch = join(workspace.releasePath, branch)
+          if (!(await isFileExist(releaseBranch))) {
+            log(`正在设置发布分支${branch}, 请稍后...`)
+            await $(`git clone ${join(workspace.path, 'dist')} ${branch}`, {
+              cwd: workspace.releasePath
+            })
+            await $(`git checkout ${branch}`)
+            log(`发布分支${branch}设置完成`)
+          }
+        })
+      )
+
       return workspace
     })
   )

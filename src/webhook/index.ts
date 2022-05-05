@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { Project } from 'src/types'
-import wecom from './wecom/index'
+import wecom from '../wecom/index'
 
 export type Data = {
   title: '开始处理' | '发布成功' | '出错了'
@@ -21,8 +21,7 @@ export default function notice(url: string | undefined, data: Data) {
   if (url.startsWith('https://qyapi.weixin.qq.com/cgi-bin/webhook/send'))
     return wecom(url, data)
   // 自定义格式
-  else
-    return axios.post(url, data).catch((err) => {
-      console.log(`webhook通知失敗: ${JSON.stringify(err)}`)
-    })
+  return axios.post(url, data).catch((err) => {
+    console.log(`${url}通知失敗: ${JSON.stringify(err)}`)
+  })
 }

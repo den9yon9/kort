@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Data } from '..'
+import { Data } from '../webhook'
 import * as Markdown from './markdown'
 
 const { bold, comment, correct, list, quote, star, stringify, warning, wrong } =
@@ -24,18 +24,14 @@ export default function wecom(url, data: Data) {
                 value instanceof Array
                   ? list(
                       value.map((item) => {
-                        if (item instanceof Object) {
-                          if (item.state === 'pending') {
-                            return star(item.path)
-                          } else if (item.state === 'rejected') {
-                            return list([
-                              wrong(item.path),
-                              warning(item.reason)
-                            ])
-                          } else if (item.state === 'fulfilled') {
-                            return correct(item.path)
-                          } else return ''
-                        } else return star(stringify(item))
+                        if (!(item instanceof Object))
+                          return star(stringify(item))
+                        if (item.state === 'pending') return star(item.path)
+                        if (item.state === 'rejected')
+                          return list([wrong(item.path), warning(item.reason)])
+                        if (item.state === 'fulfilled')
+                          return correct(item.path)
+                        return ''
                       })
                     )
                   : stringify(value)
