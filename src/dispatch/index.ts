@@ -14,7 +14,6 @@ export default class Dispatcher {
 
   findWorkspaceByOrigin(origin: string) {
     const { hostname, pathname } = parseOrigin(origin)
-    console.log(hostname, pathname, this.workspaces)
     const workspace = this.workspaces.find(
       (item) => item.hostname === hostname && item.pathname === pathname
     )
@@ -23,14 +22,16 @@ export default class Dispatcher {
   }
 
   register(data: any) {
+    const compare_url = data.compare_url || data.compare
     this.queue.push({
       origin: data.repository.html_url,
       branch: basename(data.ref),
-      compare: shortSelector(basename(data.compare_url || data.compare)),
-      compare_url: data.compare_url || data.compare,
+      compare: shortSelector(basename(compare_url)),
+      compare_url,
       sender: data.sender.login
     })
     if (this.currentTask === null) this.dispatch()
+    return '任务已存入队列'
   }
 
   private dispatch() {

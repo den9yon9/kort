@@ -2,8 +2,18 @@ import axios from 'axios'
 import { Data } from '../webhook'
 import * as Markdown from './markdown'
 
-const { bold, comment, correct, list, quote, star, stringify, warning, wrong } =
-  Markdown
+const {
+  bold,
+  comment,
+  correct,
+  list,
+  quote,
+  star,
+  stringify,
+  warning,
+  wrong,
+  trim
+} = Markdown
 
 export default function wecom(url, data: Data) {
   return markdown(
@@ -26,11 +36,13 @@ export default function wecom(url, data: Data) {
                       value.map((item) => {
                         if (!(item instanceof Object))
                           return star(stringify(item))
-                        if (item.state === 'pending') return star(item.path)
+                        if (item.state === 'pending') return star(item.name)
                         if (item.state === 'rejected')
-                          return list([wrong(item.path), warning(item.reason)])
+                          return quote(
+                            trim(list([wrong(item.name), warning(item.reason)]))
+                          )
                         if (item.state === 'fulfilled')
-                          return correct(item.path)
+                          return quote(correct(item.name))
                         return ''
                       })
                     )
@@ -55,9 +67,12 @@ async function markdown(url: string, content: string) {
     })
     .catch((err) => {
       console.log(`企業微信通知失敗: ${JSON.stringify(err)}`)
+      console.log(contentShorted)
     })
     .then((response) => {
-      if (response?.data.errcode !== 0)
+      if (response?.data.errcode !== 0) {
         console.log(`企業微信通知錯誤: ${JSON.stringify(response?.data)}`)
+        console.log(content, contentShorted, contentShorted.length)
+      }
     })
 }

@@ -52,6 +52,7 @@ export default class Workspace {
     const projects = JSON.parse(`[${stdout.replace(/]\n\[/g, '],[')}]`)
       .flat()
       .map((item) => ({
+        name: item.path.replace(`/${kortRoot}`, '').replace('/source', ''),
         path: item.path,
         state: 'pending'
       }))
@@ -133,7 +134,7 @@ export default class Workspace {
       await $(`git add .`, { cwd: this.dist })
       await $(`git commit -m 'sender: ${task}'`, { cwd: this.dist })
     } else {
-      throw new Error('dist无更新: 你的任务可能无需打包')
+      console.log('dist无更新: 你的任务可能无需打包')
     }
   }
 }

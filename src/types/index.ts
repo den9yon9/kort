@@ -7,6 +7,7 @@ export interface Task {
 }
 
 export interface Project {
+  name: string
   state: 'pending' | 'fulfilled' | 'rejected'
   path: string
   reason?: string
