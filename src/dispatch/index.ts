@@ -1,4 +1,6 @@
-import { Task } from 'src/types'
+import { basename } from 'path'
+import { Task } from '../types'
+import { shortSelector } from '../utils/git'
 import parseOrigin from '../utils/parseOrigin'
 import type Workspace from '../workspace/workspace'
 export default class Dispatcher {
@@ -20,8 +22,14 @@ export default class Dispatcher {
     return workspace
   }
 
-  register(task: Task) {
-    this.queue.push(task)
+  register(data: any) {
+    this.queue.push({
+      origin: data.repository.html_url,
+      branch: basename(data.ref),
+      compare: shortSelector(basename(data.compare_url || data.compare)),
+      compare_url: data.compare_url || data.compare,
+      sender: data.sender.login
+    })
     if (this.currentTask === null) this.dispatch()
   }
 
@@ -32,7 +40,7 @@ export default class Dispatcher {
   }
 
   private async handle(task: Task) {
-    const workspace = this.findWorkspaceByOrigin(task.origin) 
+    const workspace = this.findWorkspaceByOrigin(task.origin)
     await workspace.handleTask(task)
     this.dispatch()
   }

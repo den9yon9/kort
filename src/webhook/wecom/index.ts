@@ -11,7 +11,7 @@ export default function wecom(url, data: Data) {
     list([
       bold(
         Markdown[
-          { 开始打包: 'info', 发布成功: 'info', 出错了: 'warning' }[data.title]
+          { 开始处理: 'info', 发布成功: 'info', 出错了: 'warning' }[data.title]
         ](data.title)
       ),
       data.desc ? comment(data.desc) : '',

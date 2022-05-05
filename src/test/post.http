@@ -2,8 +2,98 @@ POST http://localhost:3008 HTTP/1.1
 content-type: application/json
 
 {
-  "compare": "497e0a1706f4c91984ce29ee86fc59cb56fa3eed...0933095d1e34024d2ad9bda02b5122dd5b1ab072",
-  "origin": "http://114.55.7.123:3000/ee-front/page.git",
-  "branch": "master"
+  "ref": "refs/heads/master",
+  "before": "497e0a1706f4c91984ce29ee86fc59cb56fa3eed",
+  "after": "07a0ec4744d831c287a65d3ce7133d7783922434",
+  "compare_url": "http://114.55.7.123:3000/ee-front/page/compare/497e0a1706f4c91984ce29ee86fc59cb56fa3eed...0933095d1e34024d2ad9bda02b5122dd5b1ab072",
+  "commits": [
+    {
+      "id": "07a0ec4744d831c287a65d3ce7133d7783922434",
+      "message": "Merge branch '_teammateTaurus' of ee-front/page into master\n",
+      "url": "http://114.55.7.123:3000/ee-front/page/commit/07a0ec4744d831c287a65d3ce7133d7783922434",
+      "author": {
+        "name": "tao.lijuan",
+        "email": "tao.lijuan@olaola.chat",
+        "username": "tao.lijuan"
+      },
+      "committer": {
+        "name": "Gogs",
+        "email": "gogs@fake.local",
+        "username": ""
+      },
+      "added": null,
+      "removed": null,
+      "modified": null,
+      "timestamp": "2022-04-30T14:19:05+08:00"
+    },
+    {
+      "id": "0933095d1e34024d2ad9bda02b5122dd5b1ab072",
+      "message": "fix: 重新点亮按钮大小和位置调整\n",
+      "url": "http://114.55.7.123:3000/ee-front/page/commit/0933095d1e34024d2ad9bda02b5122dd5b1ab072",
+      "author": {
+        "name": "taolijuan",
+        "email": "tao.lijuan@olaola.chat",
+        "username": "tao.lijuan"
+      },
+      "committer": {
+        "name": "taolijuan",
+        "email": "tao.lijuan@olaola.chat",
+        "username": "tao.lijuan"
+      },
+      "added": null,
+      "removed": null,
+      "modified": [
+        "pdy/taurus/src/pages/Home/Home.scoped.css",
+        "pdy/taurus/src/pages/Home/Home.tsx"
+      ],
+      "timestamp": "2022-04-30T13:34:22+08:00"
+    }
+  ],
+  "repository": {
+    "id": 557,
+    "owner": {
+      "id": 20,
+      "username": "ee-front",
+      "login": "ee-front",
+      "full_name": "ee-front",
+      "email": "",
+      "avatar_url": "http://114.55.7.123:3000/avatars/20"
+    },
+    "name": "page",
+    "full_name": "ee-front/page",
+    "description": "page活动页源码",
+    "private": true,
+    "fork": false,
+    "parent": null,
+    "empty": false,
+    "mirror": false,
+    "size": 431008768,
+    "html_url": "http://114.55.7.123:3000/ee-front/page",
+    "ssh_url": "git@114.55.7.123:ee-front/page.git",
+    "clone_url": "http://114.55.7.123:3000/ee-front/page.git",
+    "website": "",
+    "stars_count": 0,
+    "forks_count": 0,
+    "watchers_count": 14,
+    "open_issues_count": 0,
+    "default_branch": "master",
+    "created_at": "2022-01-12T11:45:20+08:00",
+    "updated_at": "2022-04-30T13:34:59+08:00"
+  },
+  "pusher": {
+    "id": 20,
+    "username": "ee-front",
+    "login": "ee-front",
+    "full_name": "ee-front",
+    "email": "",
+    "avatar_url": "http://114.55.7.123:3000/avatars/20"
+  },
+  "sender": {
+    "id": 221,
+    "username": "tao.lijuan",
+    "login": "tao.lijuan",
+    "full_name": "",
+    "email": "tao.lijuan@olaola.chat",
+    "avatar_url": "http://114.55.7.123:3000/avatars/221"
+  }
 }
-

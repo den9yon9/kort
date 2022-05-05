@@ -60,7 +60,6 @@ export default class Workspace {
   }
 
   async handleTask(task: Task) {
-    console.log(this.source, 88)
     await $(`git checkout ${task.branch}`, { cwd: this.source })
     await $('git pull', { cwd: this.source })
     const projects = await this.getProjects(task.compare)
@@ -68,11 +67,12 @@ export default class Workspace {
 
     try {
       await notice(this.webhook, {
-        title: '开始打包',
+        title: '开始处理',
         detail: {
+          sender: task.sender,
           repository: `${this.hostname}${this.pathname}`,
           branch: task.branch,
-          compare: task.compare,
+          compare: task.compare_url,
           commits: commits.map((item) => item.subject),
           projects
         }
@@ -101,9 +101,10 @@ export default class Workspace {
       await notice(this.webhook, {
         title: '发布成功',
         detail: {
-          repository: this.pathname,
+          sender: task.sender,
+          repository: `${this.hostname}${this.pathname}`,
           branch: task.branch,
-          compare: task.compare,
+          compare: task.compare_url,
           commits: commits.map((item) => item.subject),
           projects
         }
@@ -113,9 +114,10 @@ export default class Workspace {
         title: '出错了',
         desc: err.message,
         detail: {
-          repository: this.pathname,
+          sender: task.sender,
+          repository: `${this.hostname}${this.pathname}`,
           branch: task.branch,
-          compare: task.compare,
+          compare: task.compare_url,
           commits: commits.map((item) => item.subject),
           projects
         }
