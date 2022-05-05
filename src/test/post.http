@@ -1,7 +1,9 @@
-POST http://localhost:3008?name=yong&age=12 HTTP/1.1
+POST http://localhost:3008 HTTP/1.1
 content-type: application/json
 
 {
-  "gender": "male"
+  "compare": "497e0a1706f4c91984ce29ee86fc59cb56fa3eed...0933095d1e34024d2ad9bda02b5122dd5b1ab072",
+  "origin": "http://114.55.7.123:3000/ee-front/page.git",
+  "branch": "master"
 }
 

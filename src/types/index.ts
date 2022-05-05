@@ -4,8 +4,8 @@ export interface Task {
   compare: string
 }
 
-export interface ProjectWithState {
-  state: 'pending' | 'fulfilled' | 'rejected',
-  project: string,
+export interface Project {
+  state: 'pending' | 'fulfilled' | 'rejected'
+  path: string
   reason?: string
 }

@@ -1,5 +1,4 @@
 import { Task } from 'src/types'
-import webhook from 'src/webhook'
 import parseOrigin from '../utils/parseOrigin'
 import type Workspace from '../workspace/workspace'
 export default class Dispatcher {

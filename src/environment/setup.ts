@@ -44,7 +44,6 @@ export default async function setup(workspaces: Workspace[]) {
               )
             }
           } else {
-            log(`打包分支${branch}已存在`)
           }
         })
       )
@@ -78,7 +77,6 @@ export default async function setup(workspaces: Workspace[]) {
             await $(`git branch ${branch}`, { cwd: workspace.dist })
             log(`提交分支${branch}已创建`)
           } else {
-            log(`提交分支${branch}已存在`)
           }
         })
       )
