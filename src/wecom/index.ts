@@ -58,7 +58,7 @@ export default function wecom(url, data: Data) {
 async function markdown(url: string, content: string) {
   // markdown.content内容不能超过4096, 否则会通知失败
   const contentShorted =
-    content.length >= 4096 ? content.substring(0, 4096) : content
+    content.length >= 4096 ? content.substring(0, 3000) : content
 
   return axios
     .post(url, {
@@ -72,7 +72,7 @@ async function markdown(url: string, content: string) {
     .then((response) => {
       if (response?.data.errcode !== 0) {
         console.log(`企業微信通知錯誤: ${JSON.stringify(response?.data)}`)
-        console.log(content, contentShorted, contentShorted.length)
+        console.log(contentShorted, contentShorted.length)
       }
     })
 }

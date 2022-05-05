@@ -40,8 +40,8 @@ export default class Workspace {
     return join(this.path, 'dist')
   }
 
-  compare(selector) {
-    return gitlog(selector, this.source)
+  async compare(selector) {
+    return await gitlog(selector, this.source)
   }
 
   private async getProjects(compare: string) {
@@ -62,9 +62,10 @@ export default class Workspace {
 
   async handleTask(task: Task) {
     await $(`git checkout ${task.branch}`, { cwd: this.source })
+    await $('git fetch', { cwd: this.source })
+    const commits = await this.compare(task.compare)
     await $('git pull', { cwd: this.source })
     const projects = await this.getProjects(task.compare)
-    const commits = await this.compare(task.compare)
 
     try {
       await notice(this.webhook, {

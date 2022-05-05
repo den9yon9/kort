@@ -8,7 +8,7 @@ export const popString = (str: string) =>
 
 export const gitlog = async (selector: string, cwd: string) => {
   const { stdout } = await $(
-    `git log ${selector} --pretty=format:'{%n  "commit": "%H",%n  "abbreviated_commit": "%h",%n  "tree": "%T",%n  "abbreviated_tree": "%t",%n  "parent": "%P",%n  "abbreviated_parent": "%p",%n  "refs": "%D",%n  "encoding": "%e",%n  "subject": "%s",%n  "sanitized_subject_line": "%f",%n  "body": "%b",%n  "commit_notes": "%N",%n  "verification_flag": "%G?",%n  "signer": "%GS",%n  "signer_key": "%GK",%n  "author": {%n    "name": "%aN",%n    "email": "%aE",%n    "date": "%aD"%n  },%n  "commiter": {%n    "name": "%cN",%n    "email": "%cE",%n    "date": "%cD"%n  }%n},'`,
+    `git log ${selector} --pretty=format:'{"subject": "%s"},'`,
     { cwd }
   )
   return JSON.parse(`[${popString(stdout)}]`)
@@ -16,7 +16,7 @@ export const gitlog = async (selector: string, cwd: string) => {
 
 export const gitshow = async (commit: string, cwd: string) => {
   const { stdout } = await $(
-    `git show ${commit} --pretty=format:'{%n  "commit": "%H",%n  "abbreviated_commit": "%h",%n  "tree": "%T",%n  "abbreviated_tree": "%t",%n  "parent": "%P",%n  "abbreviated_parent": "%p",%n  "refs": "%D",%n  "encoding": "%e",%n  "subject": "%s",%n  "sanitized_subject_line": "%f",%n  "body": "%b",%n  "commit_notes": "%N",%n  "verification_flag": "%G?",%n  "signer": "%GS",%n  "signer_key": "%GK",%n  "author": {%n    "name": "%aN",%n    "email": "%aE",%n    "date": "%aD"%n  },%n  "commiter": {%n    "name": "%cN",%n    "email": "%cE",%n    "date": "%cD"%n  }%n}'`,
+    `git show ${commit} --pretty=format:'{"subject": "%s"}'`,
     { cwd }
   )
   return JSON.parse(`[${popString(stdout)}]`)

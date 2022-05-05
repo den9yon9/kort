@@ -4,6 +4,7 @@ import configuration from '../configuration'
 import setup from '../environment'
 import { green } from 'kolorist'
 import Dispatcher from '../dispatch'
+import Schedule from '../schedule'
 
 const argv = minimist(process.argv.slice(2), { string: ['_'] })
 
@@ -13,9 +14,14 @@ if (!config) throw new Error(`请使用-c指定配置文件路径`)
 
 const workspaces = configuration(config)
 
-;(async () => {
+async function bootstrap() {
   await setup(workspaces)
-  app.context.dispatcher = new Dispatcher(workspaces)
+
+  const dispatcher = new Dispatcher(workspaces)
+  app.context.dispatcher = dispatcher
   app.listen(+port)
+  new Schedule(dispatcher)
   console.log(green(`服务已启动于${port}端口`))
-})()
+}
+
+bootstrap()

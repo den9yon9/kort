@@ -4,7 +4,7 @@ import { shortSelector } from '../utils/git'
 import parseOrigin from '../utils/parseOrigin'
 import type Workspace from '../workspace/workspace'
 export default class Dispatcher {
-  private workspaces: Workspace[]
+  readonly workspaces: Workspace[]
   private currentTask: Task | null = null
   private queue: Task[] = []
 
@@ -21,13 +21,17 @@ export default class Dispatcher {
     return workspace
   }
 
-  register(data: any) {
-    const compare_url = data.compare_url || data.compare
+  register(data: {
+    ref: string
+    compare_url: string
+    repository: { html_url: string }
+    sender: { login: string }
+  }) {
     this.queue.push({
       origin: data.repository.html_url,
       branch: basename(data.ref),
-      compare: shortSelector(basename(compare_url)),
-      compare_url,
+      compare: decodeURIComponent(basename(data.compare_url)),
+      compare_url: decodeURIComponent(data.compare_url),
       sender: data.sender.login
     })
     if (this.currentTask === null) this.dispatch()
