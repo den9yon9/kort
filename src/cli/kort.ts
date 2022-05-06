@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import * as minimist from 'minimist'
 import app from '../server'
 import configuration from '../configuration'

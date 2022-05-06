@@ -14,7 +14,6 @@ export default class Schedule {
     this.cron = new CronJob(
       time,
       () => {
-        console.log(22)
         dispatcher.workspaces.forEach(async (workspace) => {
           await $('git fetch', { cwd: workspace.source })
           workspace.branches.forEach(async (branch) => {

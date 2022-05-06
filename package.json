@@ -1,12 +1,16 @@
 {
-  "name": "@den9yon9/kort",
-  "version": "0.0.1",
+  "name": "kort",
+  "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "build": "tsc",
-    "kort": "ts-node ./src/cli/kort.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rm -rf dist && tsc",
+    "test": "ts-node ./src/cli/kort.ts"
+  },
+  "files": [
+    "dist"
+  ],
+  "bin": {
+    "kort": "dist/cli/kort.js"
   },
   "author": "",
   "license": "ISC",
