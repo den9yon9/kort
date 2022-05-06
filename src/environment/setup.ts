@@ -99,7 +99,9 @@ export default async function setup(workspaces: Workspace[]) {
             await $(`git clone ${join(workspace.path, 'dist')} ${branch}`, {
               cwd: workspace.releasePath
             })
-            await $(`git checkout ${branch}`, { cwd: workspace.releasePath })
+            await $(`git checkout ${branch}`, {
+              cwd: `${workspace.releasePath}/${branch}`
+            })
             log(`发布分支${branch}设置完成`)
           }
         })
