@@ -1,10 +1,6 @@
 import { CronJob } from 'cron'
+import { $, getSHA1 } from '../utils'
 import Dispatcher from '../dispatch'
-import { exec } from 'child_process'
-import { promisify } from 'util'
-import { getSHA1 } from '../utils/git'
-
-const $ = promisify(exec)
 
 export default class Schedule {
   private cron: CronJob

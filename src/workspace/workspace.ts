@@ -1,14 +1,10 @@
 import { dirname, join } from 'path'
-import { promisify } from 'util'
-import { exec } from 'child_process'
-import buildProject from './build'
 import parseOrigin from '../utils/parseOrigin'
 import { rm, mkdir, rename } from 'fs/promises'
-import { gitlog } from '../utils/git'
 import notice from '../webhook'
 import { Project, Task } from '../types'
-
-const $ = promisify(exec)
+import { $, gitlog } from '../utils'
+import buildProject from './buildProject'
 
 const kortRoot = join(process.env.HOME as string, '.kort')
 const kortReleaseRoot = join(process.env.HOME as string, 'kort-release')

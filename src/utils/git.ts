@@ -1,10 +1,4 @@
-import { exec } from 'child_process'
-import { promisify } from 'util'
-
-const $ = promisify(exec)
-
-export const popString = (str: string) =>
-  str.split('').reverse().join('').substring(1).split('').reverse().join('')
+import { $, popString } from '.'
 
 export const gitlog = async (selector: string, cwd: string) => {
   const { stdout } = await $(
@@ -24,3 +18,21 @@ export const shortSelector = (selector: string) =>
     .split('...')
     .map((item) => item.substring(0, 6))
     .join('...')
+
+export function isBranchExist(path: string, branch: string) {
+  return $(`git rev-parse --verify ${branch}`, { cwd: path })
+    .then(() => Promise.resolve(true))
+    .catch(() => Promise.resolve(false))
+}
+
+export function isRepository(path: string) {
+  return $('git rev-parse --is-inside-work-tree', { cwd: path })
+    .then(() => Promise.resolve(true))
+    .catch((err) => Promise.resolve(false))
+}
+
+export function isEmptyRepository(path: string) {
+  return $('git log', { cwd: path })
+    .then(() => Promise.resolve(false))
+    .catch(() => Promise.resolve(true))
+}

@@ -1,9 +1,7 @@
-import { exec } from 'child_process'
-import { promisify } from 'util'
 import { readFile } from 'fs/promises'
 import { resolve } from 'path'
-import getProjectPkgManager from '../utils/getProjectPkgManager'
-const $ = promisify(exec)
+import { $ } from '../utils'
+import getProjectPkgManager from './getProjectPkgManager'
 
 const installMap = {
   npm: 'npm ci',

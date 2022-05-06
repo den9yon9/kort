@@ -2,6 +2,7 @@ import { basename } from 'path'
 import { Task } from '../types'
 import parseOrigin from '../utils/parseOrigin'
 import type Workspace from '../workspace/workspace'
+
 export default class Dispatcher {
   readonly workspaces: Workspace[]
   private currentTask: Task | null = null

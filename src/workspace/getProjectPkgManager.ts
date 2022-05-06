@@ -1,14 +1,7 @@
 // 分析项目是否需要打包 & 要使用的包管理器
 
-import { PathLike } from 'fs'
-import { access } from 'fs/promises'
 import { resolve } from 'path'
-
-function isFileExist(path: PathLike) {
-  return access(path)
-    .then(() => Promise.resolve(true))
-    .catch(() => Promise.resolve(false))
-}
+import { isFileExist } from '../utils'
 
 const lockFileMap = [
   {
