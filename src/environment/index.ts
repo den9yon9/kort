@@ -1,4 +1,4 @@
-import { mkdir } from 'fs/promises'
+import { mkdir, rm } from 'fs/promises'
 import { green, red, yellow } from 'kolorist'
 import { join } from 'path'
 import type Workspace from '../workspace/workspace'
@@ -70,7 +70,7 @@ export default async function setup(workspaces: Workspace[]) {
         await dist$('git commit -am "initial commit"')
         log(`dist仓库初始提交完成`)
         // 删除旧的release仓库
-        await $(`rm -rf ${workspace.releasePath}`)
+        await rm(workspace.releasePath, { recursive: true, force: true })
       }
 
       // 准备dist提交分支

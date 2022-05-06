@@ -1,10 +1,10 @@
-import { dirname, join } from 'path'
+import { join } from 'path'
 import parseOrigin from '../utils/parseOrigin'
-import { rm, mkdir, rename } from 'fs/promises'
 import notice from '../webhook'
 import { Project, Task } from '../types'
 import { $, gitlog } from '../utils'
 import buildProject from './buildProject'
+import { mkdir } from 'fs/promises'
 
 const kortRoot = join(process.env.HOME as string, '.kort')
 const kortReleaseRoot = join(process.env.HOME as string, 'kort-release')
@@ -81,13 +81,14 @@ export default class Workspace {
             await buildProject(project.path)
             const projectDist = join(project.path, 'dist')
             const targetDist = project.path.replace(this.source, this.dist)
-            await rm(targetDist, { recursive: true, force: true })
-            await mkdir(dirname(targetDist), { recursive: true })
-            await rename(projectDist, targetDist)
+            await mkdir(targetDist, { recursive: true })
+            await $(`git rm -rf --ignore-unmatch .`, { cwd: targetDist })
+            // FIXME: 替换mv为平台无关命令
+            await $(`mv ${projectDist}/* ${targetDist}/`)
             project.state = 'fulfilled'
           } catch (err) {
             project.state = 'rejected'
-            project.reason = err.message
+            project.reason = { ...err, message: err.message }
           }
         })
       )
@@ -97,7 +98,7 @@ export default class Workspace {
       await $('git pull', { cwd: join(this.releasePath, task.branch) })
 
       await notice(this.webhook, {
-        title: '发布成功',
+        title: '处理完成',
         detail: {
           sender: task.sender,
           repository: `${this.hostname}${this.pathname}`,
@@ -128,7 +129,7 @@ export default class Workspace {
     const { stdout } = await $(`git status`, { cwd: this.dist })
     if (!stdout.includes('working tree clean')) {
       await $(`git add .`, { cwd: this.dist })
-      await $(`git commit -m 'sender: ${task}'`, { cwd: this.dist })
+      await $(`git commit -m 'sender: ${task.sender}'`, { cwd: this.dist })
     } else {
       console.log('dist无更新: 你的任务可能无需打包')
     }

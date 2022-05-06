@@ -3,7 +3,7 @@ import { Project } from 'src/types'
 import wecom from '../wecom/index'
 
 export type Data = {
-  title: '开始处理' | '发布成功' | '出错了'
+  title: '开始处理' | '处理完成' | '出错了'
   desc?: string
   detail: {
     sender: string

@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "build": "rm -rf dist && tsc",
-    "test": "ts-node ./src/cli/kort.ts  -t '*/20 * * * * *'"
+    "test": "ts-node ./src/cli/kort.ts  -t '*/5 * * * * *'"
   },
   "files": [
     "dist"
