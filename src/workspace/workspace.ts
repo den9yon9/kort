@@ -62,9 +62,8 @@ export default class Workspace {
 
   async handleTask(task: Task) {
     await $(`git checkout ${task.branch}`, { cwd: this.source })
-    await $('git fetch', { cwd: this.source })
-    const commits = await this.compare(task.compare)
     await $('git pull', { cwd: this.source })
+    const commits = await this.compare(task.compare)
     const projects = await this.getProjects(task.compare)
 
     try {

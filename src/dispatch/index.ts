@@ -1,6 +1,5 @@
 import { basename } from 'path'
 import { Task } from '../types'
-import { shortSelector } from '../utils/git'
 import parseOrigin from '../utils/parseOrigin'
 import type Workspace from '../workspace/workspace'
 export default class Dispatcher {
@@ -30,8 +29,8 @@ export default class Dispatcher {
     this.queue.push({
       origin: data.repository.html_url,
       branch: basename(data.ref),
-      compare: decodeURIComponent(basename(data.compare_url)),
-      compare_url: decodeURIComponent(data.compare_url),
+      compare: basename(data.compare_url),
+      compare_url: data.compare_url,
       sender: data.sender.login
     })
     if (this.currentTask === null) this.dispatch()

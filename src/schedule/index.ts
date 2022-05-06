@@ -1,5 +1,10 @@
 import { CronJob } from 'cron'
-import Dispatcher from 'src/dispatch'
+import Dispatcher from '../dispatch'
+import { exec } from 'child_process'
+import { promisify } from 'util'
+import { getSHA1 } from '../utils/git'
+
+const $ = promisify(exec)
 
 export default class Schedule {
   private cron: CronJob
@@ -9,11 +14,15 @@ export default class Schedule {
     this.cron = new CronJob(
       '*/20 * * * * *',
       () => {
-        dispatcher.workspaces.forEach((workspace) => {
-          workspace.branches.forEach((branch) => {
+        dispatcher.workspaces.forEach(async (workspace) => {
+          await $('git fetch', { cwd: workspace.source })
+          workspace.branches.forEach(async (branch) => {
+            const base = await getSHA1(branch, workspace.source)
+            const head = await getSHA1(`origin/${branch}`, workspace.source)
+            if (base === head) return
             dispatcher.register({
               ref: branch,
-              compare_url: encodeURIComponent(`${branch}...origin/${branch}`),
+              compare_url: `${base}...${head}`,
               repository: { html_url: workspace.origin },
               sender: { login: 'cron' }
             })

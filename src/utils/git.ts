@@ -14,12 +14,10 @@ export const gitlog = async (selector: string, cwd: string) => {
   return JSON.parse(`[${popString(stdout)}]`)
 }
 
-export const gitshow = async (commit: string, cwd: string) => {
-  const { stdout } = await $(
-    `git show ${commit} --pretty=format:'{"subject": "%s"}'`,
-    { cwd }
-  )
-  return JSON.parse(`[${popString(stdout)}]`)
+export const getSHA1 = async (ref: string, cwd: string) => {
+  const { stdout } = await $(`git rev-parse ${ref}`, { cwd })
+  console.log(ref, cwd, stdout, 8888888)
+  return stdout.trim()
 }
 
 export const shortSelector = (selector: string) =>

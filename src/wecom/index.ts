@@ -39,7 +39,12 @@ export default function wecom(url, data: Data) {
                         if (item.state === 'pending') return star(item.name)
                         if (item.state === 'rejected')
                           return quote(
-                            trim(list([wrong(item.name), warning(item.reason)]))
+                            trim(
+                              list([
+                                wrong(item.name),
+                                warning(stringify(item.reason))
+                              ])
+                            )
                           )
                         if (item.state === 'fulfilled')
                           return quote(correct(item.name))
