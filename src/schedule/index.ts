@@ -9,11 +9,12 @@ const $ = promisify(exec)
 export default class Schedule {
   private cron: CronJob
   private dispatcher: Dispatcher
-  constructor(dispatcher: Dispatcher) {
+  constructor(time: string, dispatcher: Dispatcher) {
     this.dispatcher = dispatcher
     this.cron = new CronJob(
-      '*/20 * * * * *',
+      time,
       () => {
+        console.log(22)
         dispatcher.workspaces.forEach(async (workspace) => {
           await $('git fetch', { cwd: workspace.source })
           workspace.branches.forEach(async (branch) => {

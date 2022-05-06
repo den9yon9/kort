@@ -52,7 +52,7 @@ export default class Workspace {
     const projects = JSON.parse(`[${stdout.replace(/]\n\[/g, '],[')}]`)
       .flat()
       .map((item) => ({
-        name: item.path.replace(`/${kortRoot}`, '').replace('/source', ''),
+        name: item.path.replace(`${kortRoot}/`, '').replace('/source', ''),
         path: item.path,
         state: 'pending'
       }))

@@ -1,7 +1,0 @@
-[
-  {
-    "origin": "http://114.55.7.123:3000/ee-front/page.git",
-    "webhook": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=2e5d59d5-abaa-42e6-948e-0687039d4e6e",
-    "branches": ["master"]
-  }
-]

@@ -16,7 +16,6 @@ export const gitlog = async (selector: string, cwd: string) => {
 
 export const getSHA1 = async (ref: string, cwd: string) => {
   const { stdout } = await $(`git rev-parse ${ref}`, { cwd })
-  console.log(ref, cwd, stdout, 8888888)
   return stdout.trim()
 }
 

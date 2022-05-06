@@ -17,11 +17,12 @@ export default function loader(configPath: string) {
 
 function format(configRaw: ConfigRaw): ConfigCooked {
   return configRaw.map((item) => {
-    if (typeof item === 'string') {
+    if (typeof item === 'string')
       return {
         origin: item,
         branches: ['master']
       }
-    } else return item
+
+    return { ...item, branches: item.branches || ['master'] }
   })
 }
