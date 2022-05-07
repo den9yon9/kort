@@ -13,6 +13,11 @@ export const getSHA1 = async (ref: string, cwd: string) => {
   return stdout.trim()
 }
 
+export const getInitialCommit = async (path: string) => {
+  const { stdout } = await $('git rev-list --max-parents=0 HEAD', { cwd: path })
+  return stdout.trim()
+}
+
 export const shortSelector = (selector: string) =>
   selector
     .split('...')
@@ -28,7 +33,7 @@ export function isBranchExist(path: string, branch: string) {
 export function isRepository(path: string) {
   return $('git rev-parse --is-inside-work-tree', { cwd: path })
     .then(() => Promise.resolve(true))
-    .catch((err) => Promise.resolve(false))
+    .catch(() => Promise.resolve(false))
 }
 
 export function isEmptyRepository(path: string) {

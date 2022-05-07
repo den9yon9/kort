@@ -11,11 +11,13 @@ import Schedule from '../schedule'
 const argv = minimist(process.argv.slice(2), { string: ['_'] })
 
 const {
+  _,
   c: config = `${process.env.HOME}/.kortrc.json`,
   p: port = 3008,
   t: time = '0 */5 * * * *',
   s: serve,
-  v: version
+  v: version,
+  b: build
 } = argv
 
 if (version) console.log(process.env['npm_package_version'])

@@ -4,6 +4,7 @@ import { join } from 'path'
 import type Workspace from '../workspace/workspace'
 import {
   $,
+  getInitialCommit,
   isBranchExist,
   isEmptyRepository,
   isFileExist,
@@ -31,6 +32,8 @@ export default async function setup(workspaces: Workspace[]) {
       log('开始clone...')
       await stream$(`git clone ${workspace.origin} source`, workspace.path)
       log('clone完成')
+    } else {
+      await stream$(`git fetch --prune`, workspace.source)
     }
 
     // 准备打包分支
@@ -78,7 +81,12 @@ export default async function setup(workspaces: Workspace[]) {
     await Promise.all(
       workspace.branches.map(async (branch) => {
         if (!(await isBranchExist(workspace.dist, branch))) {
-          await $(`git branch ${branch}`, { cwd: workspace.dist })
+          // 切到第一次提交后再切新的分支出来,保障每一个dist分支是干净的
+          await $(`git checkout ${await getInitialCommit(workspace.dist)}`, {
+            cwd: workspace.dist
+          })
+          await $(`git clean -fd`, { cwd: workspace.dist })
+          await $(`git checkout -b ${branch}`, { cwd: workspace.dist })
           log(`提交分支${branch}已创建`)
         } else {
         }
@@ -102,7 +110,7 @@ export default async function setup(workspaces: Workspace[]) {
             workspace.releasePath
           )
           await $(`git checkout ${branch}`, {
-            cwd: `${workspace.releasePath}/${branch}`
+            cwd: join(workspace.releasePath, branch)
           })
           log(`发布分支${branch}设置完成`)
         }

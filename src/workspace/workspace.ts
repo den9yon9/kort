@@ -25,8 +25,10 @@ export default class Workspace {
     if (!hostname || !pathname) throw new Error(`origin: ${origin}格式错误`)
     this.hostname = hostname
     this.pathname = pathname
-    this.path = join(kortRoot, hostname, pathname)
-    this.releasePath = join(kortReleaseRoot, hostname, pathname)
+    // this.path = join(kortRoot, hostname, pathname)
+    // this.releasePath = join(kortReleaseRoot, hostname, pathname)
+    this.path = join(kortRoot, pathname)
+    this.releasePath = join(kortReleaseRoot, pathname)
   }
 
   get source() {
@@ -67,7 +69,7 @@ export default class Workspace {
         title: '开始处理',
         detail: {
           sender: task.sender,
-          repository: `${this.hostname}${this.pathname}`,
+          repository: this.pathname,
           branch: task.branch,
           compare: task.compare_url,
           commits: commits.map((item) => item.subject),
@@ -79,6 +81,7 @@ export default class Workspace {
         projects.map(async (project) => {
           try {
             await buildProject(project.path)
+            await $(`git checkout ${task.branch}`, { cwd: this.dist })
             const projectDist = join(project.path, 'dist')
             const targetDist = project.path.replace(this.source, this.dist)
             await mkdir(targetDist, { recursive: true })
@@ -97,13 +100,15 @@ export default class Workspace {
 
       await this.commitDist(task)
 
-      await $('git pull', { cwd: join(this.releasePath, task.branch) })
+      await $('git pull', {
+        cwd: join(this.releasePath, task.branch)
+      })
 
       await notice(this.webhook, {
         title: '处理完成',
         detail: {
           sender: task.sender,
-          repository: `${this.hostname}${this.pathname}`,
+          repository: this.pathname,
           branch: task.branch,
           compare: task.compare_url,
           commits: commits.map((item) => item.subject),
@@ -116,7 +121,7 @@ export default class Workspace {
         desc: { ...err, message: err.message },
         detail: {
           sender: task.sender,
-          repository: `${this.hostname}${this.pathname}`,
+          repository: this.pathname,
           branch: task.branch,
           compare: task.compare_url,
           commits: commits.map((item) => item.subject),
@@ -128,8 +133,8 @@ export default class Workspace {
 
   private async commitDist(task: Task) {
     // 工作区不干净才去提交代码
-    const { stdout } = await $(`git status`, { cwd: this.dist })
-    if (!stdout.includes('working tree clean')) {
+    const { stdout } = await $(`git status -s`, { cwd: this.dist })
+    if (stdout) {
       await $(`git add .`, { cwd: this.dist })
       await $(`git commit -m 'sender: ${task.sender}'`, { cwd: this.dist })
     } else {
