@@ -75,9 +75,27 @@ kort有两种运行模式:
 
 - 服务模式
   使用-s参数可以让kort以服务模式运行, 此时kort会在3008端口启动一个http服务, 将此服务地址配置到远程仓库的webhook钩子中, 就可以由远程仓库触发kort打包
+
+
 ```bash
 $ kort -s # 你也可以使用-p参数指定服务端口
 ```
 
+
 ## release
 kort的两种运行模式, 都会将源码打包到~/kort-release目录下, 你只需要到~/kort-release下找到要对应的目录发布出去即可
+
+## 守护kort进程
+你可以使用你熟悉的任何方式守护kort进程, 这里以node进程管理模块pm2为例
+
+### 安装pm2
+```bash
+$ npm i pm2 -g
+
+# 定时任务模式
+$ pm2 start kort
+
+# 服务模式
+$ pm2 start kort -- -s -p 3009
+
+```
