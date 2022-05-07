@@ -1,27 +1,23 @@
 #!/usr/bin/env node
 
-import * as minimist from 'minimist'
 import app from '../server'
 import configuration from '../configuration'
 import setup from '../environment'
 import { green } from 'kolorist'
 import Dispatcher from '../dispatch'
 import Schedule from '../schedule'
-
-const argv = minimist(process.argv.slice(2), { string: ['_'] })
+import axios from 'axios'
+import { argv, cmd } from './parseArgv'
 
 const {
-  _,
+  _: [param1, param2],
   c: config = `${process.env.HOME}/.kortrc.json`,
   p: port = 3008,
-  t: time = '0 */5 * * * *',
-  s: serve,
-  v: version,
-  b: build
+  t: time
 } = argv
 
-if (version) console.log(process.env['npm_package_version'])
-else kort()
+if (cmd === 'kort') kort()
+else if (cmd === 'build') build(param1, param2)
 
 function kort() {
   if (!config) throw new Error(`请使用-c指定配置文件路径`)
@@ -30,13 +26,22 @@ function kort() {
   const dispatcher = new Dispatcher(workspaces)
 
   setup(workspaces).then(() => {
-    if (!serve) {
+    app.context.dispatcher = dispatcher
+    app.listen(port)
+    console.log(green(`\nkort服务已启动于${port}端口\n`))
+
+    if (time) {
       new Schedule(time, dispatcher)
       console.log(green(`\n定时任务已启动(cron pattern: ${time})\n`))
-    } else {
-      app.context.dispatcher = dispatcher
-      app.listen(port)
-      console.log(green(`\nkort服务已启动于${port}端口\n`))
     }
   })
+}
+
+function build(origin: string, branch: string) {
+  axios
+    .post(`http://localhost:${port}/build`, { origin, branch })
+    .catch((err) => {
+      console.log(err)
+      console.log(`build失败, 请检查是否启动kort服务: ${err.message}`)
+    })
 }

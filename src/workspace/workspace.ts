@@ -72,7 +72,7 @@ export default class Workspace {
           repository: this.pathname,
           branch: task.branch,
           compare: task.compare_url,
-          commits: commits.map((item) => item.subject),
+          commits,
           projects
         }
       })
@@ -111,7 +111,7 @@ export default class Workspace {
           repository: this.pathname,
           branch: task.branch,
           compare: task.compare_url,
-          commits: commits.map((item) => item.subject),
+          commits,
           projects
         }
       })
@@ -124,7 +124,7 @@ export default class Workspace {
           repository: this.pathname,
           branch: task.branch,
           compare: task.compare_url,
-          commits: commits.map((item) => item.subject),
+          commits,
           projects
         }
       })

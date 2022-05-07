@@ -65,7 +65,7 @@ export default function wecom(url, data: Data) {
 async function markdown(url: string, content: string) {
   // markdown.content内容不能超过4096, 否则会通知失败
   const contentShorted =
-    content.length >= 4096 ? `${content.substring(0, 4095)}...` : content
+    content.length >= 4096 ? `${content.substring(0, 3800)}...` : content
 
   return axios
     .post(url, {

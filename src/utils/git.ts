@@ -1,11 +1,11 @@
 import { $, popString } from '.'
 
 export const gitlog = async (selector: string, cwd: string) => {
-  const { stdout } = await $(
-    `git log ${selector} --pretty=format:'{"subject": "%s"},'`,
-    { cwd }
-  )
-  return JSON.parse(`[${popString(stdout)}]`)
+  const { stdout } = await $(`git log ${selector} --pretty=format:'"%s",'`, {
+    cwd
+  })
+  const commits = JSON.parse(`[${popString(stdout)}]`) as Array<string>
+  return [...commits.slice(0, 20), '...']
 }
 
 export const getSHA1 = async (ref: string, cwd: string) => {

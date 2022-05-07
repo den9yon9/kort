@@ -12,14 +12,14 @@ export default class Dispatcher {
     this.workspaces = workspaces
   }
 
-  findWorkspace(task: Task) {
-    const { hostname, pathname } = parseOrigin(task.origin)
+  findWorkspace(origin: string, branch: string) {
+    const { hostname, pathname } = parseOrigin(origin)
     const workspace = this.workspaces.find(
       (item) => item.hostname === hostname && item.pathname === pathname
     )
-    if (!workspace) throw new Error(`${task.origin}未配置, 任务已被忽略`)
-    if (!workspace.branches.includes(task.branch))
-      throw new Error(`${task.origin} ~ ${task.branch}分支未配置, 任务已被忽略`)
+    if (!workspace) console.log(`${origin}未配置, 任务已被忽略`)
+    if (!workspace?.branches.includes(branch))
+      console.log(`${origin} ~ ${branch}分支未配置, 任务已被忽略`)
 
     return workspace
   }
@@ -48,13 +48,8 @@ export default class Dispatcher {
   }
 
   private async handle(task: Task) {
-    try {
-      const workspace = this.findWorkspace(task)
-      await workspace.handleTask(task)
-    } catch (err) {
-      console.log(err.message)
-    } finally {
-      this.dispatch()
-    }
+    const workspace = this.findWorkspace(task.origin, task.branch)
+    if (workspace) await workspace.handleTask(task)
+    this.dispatch()
   }
 }
