@@ -1,56 +1,83 @@
-# 自动打包服务
+# Kort
 
-## 基础配置
-- 打包master分支, 只需配置远程仓库地址: 
-  
-```json
-	[
-		"****/repository1.git",
-		"****/repository2.git",
-		...
-	]
+轻量级node自动打包服务
+
+## Install
+```bash
+$ npm install kort -g	
 ```
 
-然后执行kort --config "配置文件路径", kort会打包master到home下的kort-release目录, 你只需发布这些打包产物即可
-
-
-tips: 更新配置文件, 需要重新执行一下kort --config "配置文件路径", 才会生效
-
-## 进阶
-
-### webhook
-通常我们希望能知道打包进度或报错信息, 此时我们需要配置一个webhook,   你只需在配置中增加一个webhook字段即可,kort内置了企业微信通知, 如果你想要自定义webhook, 请查看这里
-
+## Useage
+### 配置
+使用kort, 你需要提供一份配置文件来告诉kort要打包的项目信息, kort默认会读取~/.kortrc.json, 最简单的配置如下
 
 ```json
+// ~/.kortrc.json
+
 [
-	{
-		"origin": "****/repository1.git",
-		"webhook": "https://***"
-	},
-	{
-		"origin": "****/repository2.git",
-		"webhook": "https://***"
-	},
-	...
+  "repository1.git",
+  "repository2.git",
 ]
 ```
 
-### 打包其它分支
-kort默认打包master分支, 如果你想要打包其它分支, 只需这样配置
-```json
-[
-	{
-		"origin": "****/repository1.git",
-		"webhook": "https://***",
-		"branches": ["dev"]
-	},
-	{
-		"origin": "****/repository2.git",
-		"webhook": "https://***",
-		"branches": ["master", "dev"]
-	},
-	...
-]
+### 运行
+
+随后执行kort, kort将会根据配置文件中的信息,进行打包环境的设置, 设置完成后kort每5分钟同步一次远程仓库,  并将仓库中的变更打包到~/kort-release下, 接下来你只需要到kort-release下找到打包好的文件, 将它们发布出去即可
+```bash
+$ kort # 你也可以使用-c选项指定配置文件路径
 ```
 
+### 配置进阶
+
+最简单的配置已经可以完成打包工作了,  但是当源码不符合打包条件时, 或者打包失败时, 我们希望kort给我们适当的反馈, 因此我们需要在配置中添加一个webhook, 以便kort能将打包信息反馈给我们
+```json
+// ~/.kortrc.json
+[
+  {
+    "origin": "repository1.git",
+    // kort内置了企业微信webhook
+    "webhook": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=bc7871a1-7459-4c7c-8e1e-35108f7583fc"
+  },
+  {
+    "origin": "repository2.git",
+    // 自定义webhook
+    "webhook": "https://***"
+  }
+]
+
+```
+
+kort默认打包分支是master, 如果你自定义打包分支, 可以这样配置
+```json
+// ~/.kortrc.json
+[
+  {
+    "origin": "repository1.git",
+    "webhook": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=bc7871a1-7459-4c7c-8e1e-35108f7583fc",
+    "branches": ["prod", "test"]
+  },
+  {
+    "origin": "repository2.git",
+    "webhook": "https://***",
+    "branches": ["master", "dev"]
+  }
+]
+
+```
+
+
+到此为止没有更多配置项了, 但需要注意的是, 当你更改了配置文件后,  你需要重新启动kort来应用这些配置
+
+## 运行模式
+kort有两种运行模式:
+- 定时任务模式
+  定时任务模式是kort默认的运行模式, 在这种模式下, kort每5min会同步一次远程仓库并打包变更
+
+- 服务模式
+  使用-s参数可以让kort以服务模式运行, 此时kort会在3008端口启动一个http服务, 将此服务地址配置到远程仓库的webhook钩子中, 就可以由远程仓库触发kort打包
+```bash
+$ kort -s # 你也可以使用-p参数指定服务端口
+```
+
+## release
+kort的两种运行模式, 都会将源码打包到~/kort-release目录下, 你只需要到~/kort-release下找到要对应的目录发布出去即可
