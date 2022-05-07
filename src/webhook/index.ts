@@ -5,7 +5,7 @@ import wecom from '../wecom/index'
 export type Data = {
   title: '开始处理' | '处理完成' | '出错了'
   desc?: string
-  detail: {
+  detail?: {
     sender: string
     repository: string
     branch: string

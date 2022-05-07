@@ -26,7 +26,7 @@ export default class Workspace {
     this.hostname = hostname
     this.pathname = pathname
     this.path = join(kortRoot, hostname, pathname)
-    this.releasePath = join(kortReleaseRoot, pathname)
+    this.releasePath = join(kortReleaseRoot, hostname, pathname)
   }
 
   get source() {
@@ -83,6 +83,8 @@ export default class Workspace {
             const targetDist = project.path.replace(this.source, this.dist)
             await mkdir(targetDist, { recursive: true })
             await $(`git rm -rf --ignore-unmatch .`, { cwd: targetDist })
+            // 单仓多包时, git rm -rf . 会把targetDist目录本身也删掉, 所以这里要检测一下targetDist
+            await mkdir(targetDist, { recursive: true })
             // FIXME: 替换mv为平台无关命令
             await $(`mv ${projectDist}/* ${targetDist}/`)
             project.state = 'fulfilled'
@@ -111,7 +113,7 @@ export default class Workspace {
     } catch (err) {
       await notice(this.webhook, {
         title: '出错了',
-        desc: err.message,
+        desc: { ...err, message: err.message },
         detail: {
           sender: task.sender,
           repository: `${this.hostname}${this.pathname}`,

@@ -24,38 +24,40 @@ export default function wecom(url, data: Data) {
           { 开始处理: 'info', 处理完成: 'info', 出错了: 'warning' }[data.title]
         ](data.title)
       ),
-      data.desc ? comment(data.desc) : '',
-      list(
-        Object.entries(data.detail)
-          .filter(([, value]) => value !== undefined)
-          .map(([key, value]) =>
-            quote(
-              `${comment(stringify(key))}: ${
-                value instanceof Array
-                  ? list(
-                      value.map((item) => {
-                        if (!(item instanceof Object))
-                          return star(stringify(item))
-                        if (item.state === 'pending') return star(item.name)
-                        if (item.state === 'rejected')
-                          return quote(
-                            trim(
-                              list([
-                                wrong(item.name),
-                                warning(stringify(item.reason))
-                              ])
-                            )
-                          )
-                        if (item.state === 'fulfilled')
-                          return quote(correct(item.name))
-                        return ''
-                      })
-                    )
-                  : stringify(value)
-              }`
-            )
+      data.desc ? comment(stringify(data.desc)) : '',
+      data.detail
+        ? list(
+            Object.entries(data.detail)
+              .filter(([, value]) => value !== undefined)
+              .map(([key, value]) =>
+                quote(
+                  `${comment(stringify(key))}: ${
+                    value instanceof Array
+                      ? list(
+                          value.map((item) => {
+                            if (!(item instanceof Object))
+                              return star(stringify(item))
+                            if (item.state === 'pending') return star(item.name)
+                            if (item.state === 'rejected')
+                              return quote(
+                                trim(
+                                  list([
+                                    wrong(item.name),
+                                    warning(stringify(item.reason))
+                                  ])
+                                )
+                              )
+                            if (item.state === 'fulfilled')
+                              return quote(correct(item.name))
+                            return ''
+                          })
+                        )
+                      : stringify(value)
+                  }`
+                )
+              )
           )
-      )
+        : ''
     ])
   )
 }
