@@ -16,7 +16,11 @@ export type Data = {
 }
 
 export default function notice(url: string | undefined, data: Data) {
-  if (!url) return
+  if (!url) {
+    // 未配置webhook, 就将通知打印在日志里
+    console.log(data)
+    return
+  }
   // 企业微信格式
   if (url.startsWith('https://qyapi.weixin.qq.com/cgi-bin/webhook/send'))
     return wecom(url, data)

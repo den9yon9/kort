@@ -4,7 +4,7 @@
 
 ## Install
 ```bash
-$ npm install kort -g	
+$ npm install kort -g	--registry=https://dev-page.iambanban.com/registry/
 ```
 
 ## Useage
@@ -29,7 +29,7 @@ $ kort # 你也可以使用-c选项指定配置文件路径
 
 ### 配置进阶
 
-最简单的配置已经可以完成打包工作了,  但是当源码不符合打包条件时, 或者打包失败时, 我们希望kort给我们适当的反馈, 因此我们需要在配置中添加一个webhook, 以便kort能将打包信息反馈给我们
+最简单的配置已经可以完成打包工作了,  但是当源码不符合打包条件时, 或者打包失败时, 我们希望kort给我们适当的反馈, 因此我们可以在配置中添加一个webhook
 ```json
 // ~/.kortrc.json
 [
@@ -47,7 +47,7 @@ $ kort # 你也可以使用-c选项指定配置文件路径
 
 ```
 
-kort默认打包分支是master, 如果你自定义打包分支, 可以这样配置
+kort默认打包分支是master, 自定义打包分支可以这样配置
 ```json
 // ~/.kortrc.json
 [
@@ -85,16 +85,16 @@ $ kort -s # kort服务默认监听3008端口, 你也可以使用-p参数指定�
 kort的两种运行模式, 都会将源码打包到~/kort-release目录下, 你只需要到~/kort-release下找到要对应的目录发布出去即可
 
 ## 守护kort进程
-你可以使用你熟悉的任何方式守护kort进程, 这里以node进程管理模块pm2为例
+使用你熟悉的方式守护kort进程, 这里以node进程管理模块pm2为例
 
 ```bash
 # 安装pm2
 $ npm i pm2 -g
 
-# 定时任务模式
+# 守护定时任务模式
 $ pm2 start kort
 
-# or服务模式
-$ pm2 start kort -- -s -p 3009
+# or守护服务模式
+$ pm2 start kort -- -s
 
 ```
