@@ -6,6 +6,7 @@ import { $, gitlog } from '../utils'
 import buildProject from './buildProject'
 import { mkdir } from 'fs/promises'
 
+const multiRemote = false
 const kortRoot = join(process.env.HOME as string, '.kort')
 const kortReleaseRoot = join(process.env.HOME as string, 'kort-release')
 
@@ -15,8 +16,6 @@ export default class Workspace {
   webhook?: string
   hostname: string
   pathname: string
-  path: string
-  releasePath: string
   constructor(origin: string, branches: string[], webhook?: string) {
     this.origin = origin
     this.branches = branches
@@ -25,10 +24,20 @@ export default class Workspace {
     if (!hostname || !pathname) throw new Error(`origin: ${origin}格式错误`)
     this.hostname = hostname
     this.pathname = pathname
-    // this.path = join(kortRoot, hostname, pathname)
-    // this.releasePath = join(kortReleaseRoot, hostname, pathname)
-    this.path = join(kortRoot, pathname)
-    this.releasePath = join(kortReleaseRoot, pathname)
+  }
+
+  get path() {
+    return join(
+      kortRoot,
+      multiRemote ? join(this.hostname, this.pathname) : this.pathname
+    )
+  }
+
+  get releasePath() {
+    return join(
+      kortReleaseRoot,
+      multiRemote ? join(this.hostname, this.pathname) : this.pathname
+    )
   }
 
   get source() {
@@ -36,10 +45,6 @@ export default class Workspace {
   }
   get dist() {
     return join(this.path, 'dist')
-  }
-
-  async compare(selector) {
-    return await gitlog(selector, this.source)
   }
 
   private async getProjects(compare: string) {
@@ -61,7 +66,7 @@ export default class Workspace {
   async handleTask(task: Task) {
     await $(`git checkout ${task.branch}`, { cwd: this.source })
     await $('git pull', { cwd: this.source })
-    const commits = await this.compare(task.compare)
+    const commits = await gitlog(task.compare, this.source)
     const projects = await this.getProjects(task.compare)
 
     try {
@@ -69,7 +74,7 @@ export default class Workspace {
         title: '开始处理',
         detail: {
           sender: task.sender,
-          repository: this.pathname,
+          repository: this.path.replace(kortRoot, ''),
           branch: task.branch,
           compare: task.compare_url,
           commits,
@@ -108,7 +113,7 @@ export default class Workspace {
         title: '处理完成',
         detail: {
           sender: task.sender,
-          repository: this.pathname,
+          repository: this.path.replace(kortRoot, ''),
           branch: task.branch,
           compare: task.compare_url,
           commits,
@@ -121,7 +126,7 @@ export default class Workspace {
         desc: { ...err, message: err.message },
         detail: {
           sender: task.sender,
-          repository: this.pathname,
+          repository: this.path.replace(kortRoot, ''),
           branch: task.branch,
           compare: task.compare_url,
           commits,
@@ -137,8 +142,6 @@ export default class Workspace {
     if (stdout) {
       await $(`git add .`, { cwd: this.dist })
       await $(`git commit -m 'sender: ${task.sender}'`, { cwd: this.dist })
-    } else {
-      console.log('dist无更新: 你的任务可能无需打包')
-    }
+    } else console.log('dist无更新: 你的任务可能无需打包')
   }
 }

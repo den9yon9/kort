@@ -16,10 +16,12 @@ const {
   t: time
 } = argv
 
-if (cmd === 'kort') kort()
-else if (cmd === 'build') build(param1, param2)
+;({
+  kort: () => kort(config, port),
+  build: () => build(param1, param2)
+}[cmd]?.())
 
-function kort() {
+function kort(config: string, port: string) {
   if (!config) throw new Error(`请使用-c指定配置文件路径`)
 
   const workspaces = configuration(config)
@@ -28,11 +30,10 @@ function kort() {
   setup(workspaces).then(() => {
     app.context.dispatcher = dispatcher
     app.listen(port)
-    console.log(green(`\nkort服务已启动于${port}端口\n`))
-
+    console.log(`\nkort服务已启动于${green(port)}端口\n`)
     if (time) {
       new Schedule(time, dispatcher)
-      console.log(green(`\n定时任务已启动(cron pattern: ${time})\n`))
+      console.log(`\n定时任务已开启(cron pattern: ${green(time)})\n`)
     }
   })
 }
@@ -41,7 +42,9 @@ function build(origin: string, branch: string) {
   axios
     .post(`http://localhost:${port}/build`, { origin, branch })
     .catch((err) => {
-      console.log(err)
       console.log(`build失败, 请检查是否启动kort服务: ${err.message}`)
+    })
+    .then((response) => {
+      if (response) console.log(response.data)
     })
 }

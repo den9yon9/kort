@@ -19,7 +19,7 @@ export default async function setup(workspaces: Workspace[]) {
     const path$ = (cmd: string) => $(cmd, { cwd: workspace.path })
     const source$ = (cmd: string) => $(cmd, { cwd: workspace.source })
     const dist$ = (cmd: string) => $(cmd, { cwd: workspace.dist })
-    const log = (data) => console.log(`${yellow(workspace.path)}: ${data}`)
+    const log = (data) => console.log(`${yellow(workspace.origin)}: ${data}`)
 
     // 创建workspace目录
     if (!(await isFileExist(workspace.path))) {
@@ -117,6 +117,6 @@ export default async function setup(workspaces: Workspace[]) {
       })
     )
 
-    log(green('设置成功'))
+    log('设置成功')
   }
 }
