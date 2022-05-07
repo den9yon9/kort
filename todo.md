@@ -23,4 +23,4 @@
 
 [*] kort-cli
 
-kort kort.config.json  // 根据配置更新工作区,并启动服务
+[ ] 已有项目迁移 
