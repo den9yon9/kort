@@ -30,11 +30,11 @@ function kort() {
   setup(workspaces).then(() => {
     if (!serve) {
       new Schedule(time, dispatcher)
-      console.log(green(`定时任务已启动, cron pattern: ${time} `))
+      console.log(green(`\n定时任务已启动(cron pattern: ${time})\n`))
     } else {
       app.context.dispatcher = dispatcher
       app.listen(port)
-      console.log(green(`kort服务已启动于${port}端口`))
+      console.log(green(`\nkort服务已启动于${port}端口\n`))
     }
   })
 }
