@@ -1,5 +1,5 @@
 import { join } from 'path'
-import parseOrigin from '../utils/parseOrigin'
+import { parseOrigin } from '../utils'
 import notice from '../webhook'
 import { Project, Task } from '../types'
 import { $, gitlog } from '../utils'
@@ -16,7 +16,15 @@ export default class Workspace {
   webhook?: string
   hostname: string
   pathname: string
-  constructor(origin: string, branches: string[], webhook?: string) {
+  constructor({
+    origin,
+    branches,
+    webhook
+  }: {
+    origin: string
+    branches: string[]
+    webhook?: string
+  }) {
     this.origin = origin
     this.branches = branches
     this.webhook = webhook
@@ -71,15 +79,15 @@ export default class Workspace {
 
     try {
       await notice(this.webhook, {
-        title: '开始处理',
-        detail: {
+        state: 'pending',
+        task: {
           sender: task.sender,
-          repository: this.path.replace(kortRoot, ''),
+          repository: this.path.replace(`${kortRoot}/`, ''),
           branch: task.branch,
           compare: task.compare_url,
-          commits,
-          projects
-        }
+          commits
+        },
+        projects
       })
 
       await Promise.all(
@@ -98,7 +106,7 @@ export default class Workspace {
             project.state = 'fulfilled'
           } catch (err) {
             project.state = 'rejected'
-            project.reason = { ...err, message: err.message }
+            project.reason = err
           }
         })
       )
@@ -110,28 +118,28 @@ export default class Workspace {
       })
 
       await notice(this.webhook, {
-        title: '处理完成',
-        detail: {
+        state: 'fulfilled',
+        task: {
           sender: task.sender,
-          repository: this.path.replace(kortRoot, ''),
+          repository: this.path.replace(`${kortRoot}/`, ''),
           branch: task.branch,
           compare: task.compare_url,
-          commits,
-          projects
-        }
+          commits
+        },
+        projects
       })
     } catch (err) {
       await notice(this.webhook, {
-        title: '出错了',
-        desc: { ...err, message: err.message },
-        detail: {
+        state: 'rejected',
+        error: err,
+        task: {
           sender: task.sender,
-          repository: this.path.replace(kortRoot, ''),
+          repository: this.path.replace(`${kortRoot}/`, ''),
           branch: task.branch,
           compare: task.compare_url,
-          commits,
-          projects
-        }
+          commits
+        },
+        projects
       })
     }
   }

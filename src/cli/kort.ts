@@ -2,49 +2,64 @@
 
 import app from '../server'
 import configuration from '../configuration'
-import setup from '../environment'
 import { green } from 'kolorist'
 import Dispatcher from '../dispatch'
 import Schedule from '../schedule'
 import axios from 'axios'
 import { argv, cmd } from './parseArgv'
+import install from './install'
 
-const {
-  _: [param1, param2],
-  c: config = `${process.env.HOME}/.kortrc.json`,
-  p: port = 3008,
-  t: time
-} = argv
+const { port = 3008, cron, origin, branch, compare } = argv
+// 配置文件存放在~/.kortrc.json
+const config = `${process.env.HOME}/.kortrc.json`
 
 ;({
-  kort: () => kort(config, port),
-  build: () => build(param1, param2)
+  help,
+  install,
+  kort: install,
+  serve: () => serve(port),
+  build: () => build(origin, branch, compare),
+  version
 }[cmd]?.())
 
-function kort(config: string, port: string) {
-  if (!config) throw new Error(`请使用-c指定配置文件路径`)
+// kort help
+// kort install 下载&配置仓库
+// kort 下载&配置仓库
+// kort serve --port 3008 --cron '*5 * * * *' 运行服务
+// kort build --origin origin --branch master --compare compare
+// kort version
 
+async function serve(port: string) {
+  // TODO: check workspaces
   const workspaces = configuration(config)
   const dispatcher = new Dispatcher(workspaces)
 
-  setup(workspaces).then(() => {
-    app.context.dispatcher = dispatcher
-    app.listen(port)
-    console.log(`\nkort服务已启动于${green(port)}端口\n`)
-    if (time) {
-      new Schedule(time, dispatcher)
-      console.log(`\n定时任务已开启(cron pattern: ${green(time)})\n`)
-    }
-  })
+  app.context.dispatcher = dispatcher
+  app.listen(port)
+  console.log(`\n服务已启动port: ${green(port)}`)
+  if (!cron) return
+  const pattern = typeof cron === 'boolean' ? '*/5 * * * *' : cron
+  new Schedule(pattern, dispatcher)
+  console.log(`定时任务已启动: ${green(pattern)}\n`)
 }
 
-function build(origin: string, branch: string) {
+function build(origin: string, branch: string, compare) {
   axios
-    .post(`http://localhost:${port}/build`, { origin, branch })
+    .post(`http://localhost:${port}/build`, { origin, branch, compare })
     .catch((err) => {
-      console.log(`build失败, 请检查是否启动kort服务: ${err.message}`)
+      console.log(`build失败, 请检查是否已启动kort服务: ${err.message}`)
     })
     .then((response) => {
       if (response) console.log(response.data)
     })
+}
+
+function help() {
+  // TODO: help
+  console.log('TODO: help')
+}
+
+function version() {
+  // TODO: help
+  console.log('TODO: version')
 }

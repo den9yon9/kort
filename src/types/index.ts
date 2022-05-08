@@ -10,5 +10,5 @@ export interface Project {
   name: string
   state: 'pending' | 'fulfilled' | 'rejected'
   path: string
-  reason?: string
+  reason?: object
 }

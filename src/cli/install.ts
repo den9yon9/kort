@@ -1,7 +1,6 @@
 import { mkdir, rm } from 'fs/promises'
-import { green, yellow } from 'kolorist'
+import { yellow } from 'kolorist'
 import { join } from 'path'
-import type Workspace from '../workspace/workspace'
 import {
   $,
   getInitialCommit,
@@ -11,9 +10,13 @@ import {
   isRepository,
   stream$
 } from '../utils'
+import configuration from '../configuration'
+
+const config = `${process.env.HOME}/.kortrc.json`
 
 // 根据配置设置workspace环境
-export default async function setup(workspaces: Workspace[]) {
+export default async function install() {
+  const workspaces = configuration(config)
   for (let i = 0; i < workspaces.length; i++) {
     const workspace = workspaces[i]
     const path$ = (cmd: string) => $(cmd, { cwd: workspace.path })
@@ -116,7 +119,12 @@ export default async function setup(workspaces: Workspace[]) {
         }
       })
     )
-
-    log('设置成功')
   }
+
+  console.log(`\n${'   所有仓库设置完成!'}\n`)
+  console.log(
+    yellow(
+      `   下一步: 运行kort serve启动kort服务, 如果你已经启动了kort服务, 请重启服务使配置生效\n`
+    )
+  )
 }

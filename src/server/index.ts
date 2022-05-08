@@ -17,16 +17,19 @@ app.use(async (ctx) => {
       return ctx.dispatcher.register(body)
     },
     async 'POST /build'() {
-      const { origin, branch } = body
+      let { origin, branch, compare } = body
       const workspace = ctx.dispatcher.findWorkspace(origin)
       if (!workspace) return `${origin}未配置`
       if (!workspace.branches.includes(branch)) return `${branch}未配置`
-      const head = await getSHA1(branch, workspace.source)
-      const base = await getInitialCommit(workspace.source)
-      if (base === head) return
+      if (!compare) {
+        const head = await getSHA1(branch, workspace.source)
+        const base = await getInitialCommit(workspace.source)
+        if (base === head) return
+        compare = `${base}...${head}`
+      }
       return ctx.dispatcher.register({
         ref: branch,
-        compare_url: `${base}...${head}`,
+        compare_url: compare,
         repository: { html_url: workspace.origin },
         sender: { login: 'server' }
       })

@@ -1,10 +1,10 @@
 import { basename } from 'path'
 import { Task } from '../types'
-import parseOrigin from '../utils/parseOrigin'
+import { parseOrigin } from '../utils'
 import type Workspace from '../workspace/workspace'
 
 export default class Dispatcher {
-  readonly workspaces: Workspace[]
+  workspaces: Workspace[]
   private currentTask: Task | null = null
   private queue: Task[] = []
 
@@ -31,8 +31,18 @@ export default class Dispatcher {
     const compare_url = data.compare_url
     const sender = data.sender.login
     const workspace = this.findWorkspace(origin)
-    if (!workspace) return `${origin}未配置`
-    if (!workspace.branches.includes(branch)) return `${branch}未配置`
+    if (!workspace)
+      return `
+    未找到${origin}相关配置, 请检查:
+    1. ~/.kortrc.json中是否有相关配置
+    2. 配置更新后是否重启了服务
+    `
+    if (!workspace.branches.includes(branch))
+      return `
+    未找到${origin}相关配置, 请检查:
+    1. ~/.kortrc.json中是否有相关配置
+    2. 配置更新后是否重启了服务
+    `
     this.queue.push({
       origin,
       branch,
