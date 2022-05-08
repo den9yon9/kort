@@ -106,7 +106,7 @@ export default class Workspace {
             project.state = 'fulfilled'
           } catch (err) {
             project.state = 'rejected'
-            project.reason = err
+            project.reason = { ...err, message: err.message }
           }
         })
       )
@@ -146,9 +146,9 @@ export default class Workspace {
 
   private async commitDist(task: Task) {
     // 工作区不干净才去提交代码
+    await $(`git add .`, { cwd: this.dist })
     const { stdout } = await $(`git status -s`, { cwd: this.dist })
     if (stdout) {
-      await $(`git add .`, { cwd: this.dist })
       await $(`git commit -m 'sender: ${task.sender}'`, { cwd: this.dist })
     } else console.log('dist无更新: 你的任务可能无需打包')
   }

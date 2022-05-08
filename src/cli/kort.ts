@@ -22,13 +22,6 @@ const config = `${process.env.HOME}/.kortrc.json`
   version
 }[cmd]?.())
 
-// kort help
-// kort install 下载&配置仓库
-// kort 下载&配置仓库
-// kort serve --port 3008 --cron '*5 * * * *' 运行服务
-// kort build --origin origin --branch master --compare compare
-// kort version
-
 async function serve(port: string) {
   // TODO: check workspaces
   const workspaces = configuration(config)
@@ -56,10 +49,15 @@ function build(origin: string, branch: string, compare) {
 
 function help() {
   // TODO: help
-  console.log('TODO: help')
+  // console.log(`
+  //   kort 下载&配置仓库
+  //   kort install 下载&配置仓库
+  //   kort serve --port 3008 --cron '*5 * * * *' // 运行服务
+  //   kort build --origin origin --branch master --compare compare
+  //   kort version
+  // `)
 }
 
 function version() {
-  // TODO: help
-  console.log('TODO: version')
+  console.log(process.env['npm_package_version'])
 }

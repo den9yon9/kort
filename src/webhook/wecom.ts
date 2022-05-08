@@ -28,7 +28,6 @@ const projectMarkdorn = (project: Project) =>
   }[project.state]())
 
 export default function wecom(url, data: TaskState) {
-  console.log(data)
   return markdown(
     url,
     list([
