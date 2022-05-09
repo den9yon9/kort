@@ -9,7 +9,7 @@ import axios from 'axios'
 import { argv, cmd } from './parseArgv'
 import install from './install'
 
-const { port = 3008, cron, origin, branch, compare } = argv
+const { port = 3010, cron, origin, branch, compare } = argv
 // 配置文件存放在~/.kortrc.json
 const config = `${process.env.HOME}/.kortrc.json`
 

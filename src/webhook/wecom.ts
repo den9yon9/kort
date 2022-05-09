@@ -6,7 +6,6 @@ import markdown, {
   info,
   correct,
   list,
-  quote,
   star,
   warning,
   wrong,
@@ -20,12 +19,12 @@ const taskTitleMap = {
   rejected: warning('处理失败')
 }
 
-const projectMarkdorn = (project: Project) =>
+const projectMarkdorn = ({ name, reason, state }: Project) =>
   ({
-    pending: () => comment(star(project.name)),
-    fulfilled: () => info(correct(project.name)),
-    rejected: () => list([wrong(project.name), pair(project.reason as object)])
-  }[project.state]())
+    pending: () => star(comment(name)),
+    fulfilled: () => correct(comment(name)),
+    rejected: () => list([wrong(comment(name)), pair(reason as any)])
+  }[state]())
 
 export default function wecom(url, data: TaskState) {
   return markdown(

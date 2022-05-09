@@ -4,61 +4,24 @@
 
 ## Install
 ```bash
+# 安装yarn pnpm 
+$ npm install -g yarn pnpm
+
+# 安装kort
 $ npm install kort -g	--registry=https://dev-page.iambanban.com/registry/
 ```
 
-## Useage
 ### 配置
-使用kort, 你需要提供一份配置文件来告诉kort要打包的项目信息, kort默认会读取~/.kortrc.json, 最简单的配置如下
+使用kort, 你需要在home目录下配置一份.kortrc.json来告诉kort要打包的项目信息
 
-```json
-// ~/.kortrc.json
-
-[
-  "repository1.git",
-  "repository2.git",
-]
-```
-
-### 运行
-
-随后执行kort, kort将会根据配置文件中的信息,进行打包环境的设置, 设置完成后kort每5分钟同步一次远程仓库,  并将仓库中的变更打包到~/kort-release下, 接下来你只需要到kort-release下找到打包好的文件, 将它们发布出去即可
-```bash
-$ kort # 你也可以使用-c选项指定配置文件路径
-```
-
-### 配置进阶
-
-最简单的配置已经可以完成打包工作了,  但是当源码不符合打包条件时, 或者打包失败时, 我们希望kort给我们适当的反馈, 因此我们可以在配置中添加一个webhook
 ```json
 // ~/.kortrc.json
 [
   {
     "origin": "repository1.git",
-    // kort内置了企业微信webhook
-    "webhook": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=bc7871a1-7459-4c7c-8e1e-35108f7583fc"
-  },
-  {
-    "origin": "repository2.git",
-    // 自定义webhook
-    "webhook": "https://***"
-  }
-]
-
-```
-
-kort默认打包分支是master, 自定义打包分支可以这样配置
-```json
-// ~/.kortrc.json
-[
-  {
-    "origin": "repository1.git",
+    // 当源码不符合打包条件时, 或者打包失败时, 我们希望kort给我们适当的反馈, kort会将打包消息发送给webhook
     "webhook": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=bc7871a1-7459-4c7c-8e1e-35108f7583fc",
-    "branches": ["prod", "test"]
-  },
-  {
-    "origin": "repository2.git",
-    "webhook": "https://***",
+    // kort缺省打包分支是master, 如果你要打包其它分支可以这样配置
     "branches": ["master", "dev"]
   }
 ]
@@ -66,23 +29,36 @@ kort默认打包分支是master, 自定义打包分支可以这样配置
 ```
 
 
-这就是kort所有的配置项了, 需要注意的是, 当你更改了配置文件后,  你需要重新启动kort来使这些配置生效
+### 设置仓库
 
-## 运行模式
-kort有两种运行模式:
-- 定时任务模式: kort默认的运行模式, kort每5min同步一次远程仓库并打包变更
-
-- 服务模式: 使用-s参数启动此模式, 此时kort会在3008端口启动一个http服务, 将此服务地址配置到远程仓库的webhook钩子中, 就可以由远程仓库触发kort打包
-
+增加或更新~/.kortrc.json后, 需要执行kort install使配置生效
 
 ```bash
-# 以服务模式启动kort
-$ kort -s # kort服务默认监听3008端口, 你也可以使用-p参数指定其它端口
+# ~/.kortrc.json
+
+# kort install 会根据配置clone对应的仓库, 并准备好打包环境
+$ kort install
+
 ```
 
 
+### 运行kort服务
+
+kort install完成后, 就可以运行kort服务了
+
+```bash
+
+# kort serve会启动一个http服务, 默认监听3010端口, 接下来你可以将此服务发布到外网, 并将此服务地址链接配置到远程仓库的webhook钩子中, 就可以由远程仓库触发kort打包
+
+$ kort serve
+
+# 如果你不想在外网发布服务, 可以使用kort定时任务, 启动kort定时任务后, kort每5min会同步一次远程仓库并打包仓库变更
+$ kort serve --cron
+
+```
+
 ## 发布打包产物
-kort的两种运行模式, 都会将源码打包到~/kort-release目录下, 你只需要到~/kort-release下找到要对应的目录发布出去即可
+kort会将仓库源码打包到~/kort-release目录下, 你只需要到~/kort-release下找到要对应的目录发布出去即可
 
 ## 守护kort进程
 使用你熟悉的方式守护kort进程, 这里以node进程管理模块pm2为例
@@ -91,10 +67,10 @@ kort的两种运行模式, 都会将源码打包到~/kort-release目录下, 你�
 # 安装pm2
 $ npm i pm2 -g
 
-# 守护定时任务模式
+# 守护kort服务
 $ pm2 start kort
 
-# or守护服务模式
-$ pm2 start kort -- -s
+# 守护kort服务并开启kort定时任务
+$ pm2 start kort -- --cron
 
 ```
