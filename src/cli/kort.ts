@@ -16,7 +16,7 @@ const { port = 3010, cron, origin, branch, compare } = argv
   install: () => {
     install().then(() => {
       axios
-        .post(`http://localhost:${port}`)
+        .post(`http://localhost:${port}/reload`)
         .then((response) => {
           if (response) console.log(response.data)
         })
