@@ -68,9 +68,9 @@ kort会将仓库源码打包到~/kort-release目录下, 你只需要到~/kort-re
 $ npm i pm2 -g
 
 # 守护kort服务
-$ pm2 start kort
+$ pm2 start kort serve
 
 # 守护kort服务并开启kort定时任务
-$ pm2 start kort -- --cron
+$ pm2 start kort serve -- --cron
 
 ```
