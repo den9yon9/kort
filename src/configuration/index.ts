@@ -3,16 +3,23 @@
 import loader from './loader'
 import Workspace from '../workspace/workspace'
 
-export default function configuration() {
-  const config = loader()
+export default async function configuration(configPath?: string) {
+  const config = await loader(configPath)
   const workspaces: Workspace[] = []
-  config
-    .map((configItem) => new Workspace(configItem))
+  config.workspaces
+    .map(
+      (configItem) =>
+        new Workspace({
+          ...configItem,
+          storage: config.storage,
+          release: config.release
+        })
+    )
     // origin相同的配置,后面的配置覆盖前面的
     .reverse()
     .forEach((workspace) => {
       const target = workspaces.find((item) => item.origin === workspace.origin)
       if (!target) workspaces.push(workspace)
     })
-  return workspaces
+  return { ...config, workspaces }
 }

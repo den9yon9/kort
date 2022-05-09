@@ -14,8 +14,9 @@ app.use(async (ctx) => {
     'GET /'() {
       return 'hello world!'
     },
-    'POST /reload'() {
-      ctx.dispatcher.workspaces = configuration()
+    async 'POST /reload'() {
+      const { workspaces } = await configuration(body)
+      ctx.dispatcher.workspaces = workspaces
       return 'kort服务已更新'
     },
     'POST /'() {

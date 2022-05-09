@@ -7,28 +7,32 @@ import buildProject from './buildProject'
 import { mkdir } from 'fs/promises'
 
 const multiRemote = false
-
-const kortRoot = resolve('.', '.kort')
-const kortReleaseRoot = resolve('.', 'kort-release')
-
 export default class Workspace {
   origin: string
   branches: string[]
   webhook?: string
   hostname: string
   pathname: string
+  storage: string
+  release: string
   constructor({
     origin,
     branches,
-    webhook
+    webhook,
+    storage,
+    release
   }: {
     origin: string
     branches: string[]
     webhook?: string
+    storage: string
+    release: string
   }) {
     this.origin = origin
     this.branches = branches
     this.webhook = webhook
+    this.storage = storage
+    this.release = release
     const { hostname, pathname } = parseOrigin(origin)
     if (!hostname || !pathname) throw new Error(`origin: ${origin}格式错误`)
     this.hostname = hostname
@@ -37,14 +41,14 @@ export default class Workspace {
 
   get path() {
     return join(
-      kortRoot,
+      this.storage,
       multiRemote ? join(this.hostname, this.pathname) : this.pathname
     )
   }
 
   get releasePath() {
     return join(
-      kortReleaseRoot,
+      this.release,
       multiRemote ? join(this.hostname, this.pathname) : this.pathname
     )
   }
@@ -64,7 +68,7 @@ export default class Workspace {
     const projects = JSON.parse(`[${stdout.replace(/]\n\[/g, '],[')}]`)
       .flat()
       .map((item) => ({
-        name: item.path.replace(`${kortRoot}/`, '').replace('/source', ''),
+        name: item.path.replace(`${this.storage}/`, '').replace('/source', ''),
         path: item.path,
         state: 'pending'
       }))
@@ -83,7 +87,7 @@ export default class Workspace {
         state: 'pending',
         task: {
           sender: task.sender,
-          repository: this.path.replace(`${kortRoot}/`, ''),
+          repository: this.path.replace(`${this.storage}/`, ''),
           branch: task.branch,
           compare: task.compare_url,
           commits
@@ -122,7 +126,7 @@ export default class Workspace {
         state: 'fulfilled',
         task: {
           sender: task.sender,
-          repository: this.path.replace(`${kortRoot}/`, ''),
+          repository: this.path.replace(`${this.storage}/`, ''),
           branch: task.branch,
           compare: task.compare_url,
           commits
@@ -135,7 +139,7 @@ export default class Workspace {
         error: err,
         task: {
           sender: task.sender,
-          repository: this.path.replace(`${kortRoot}/`, ''),
+          repository: this.path.replace(`${this.storage}/`, ''),
           branch: task.branch,
           compare: task.compare_url,
           commits

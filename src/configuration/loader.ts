@@ -1,38 +1,51 @@
 // 读取配置文件, 格式化为统一结构
-import { readFileSync } from 'fs'
+import { writeFile, readFile } from 'fs/promises'
 import { red } from 'kolorist'
-import { resolve } from 'path'
+import { join } from 'path'
+import { isFileExist } from '../utils'
 
-type ConfigCooked = Array<{
-  origin: string
-  branches: string[]
-  webhook?: string
-}>
-
-type ConfigRaw = Array<string> | ConfigCooked
-
-const configPath = resolve('.', '.kortrc.json')
-
-export default function loader() {
-  try {
-    const data = readFileSync(configPath, { encoding: 'utf8' })
-    const config = JSON.parse(data)
-    return format(config)
-  } catch (err) {
-    console.log(err.message)
-    console.log(red(`当前目录${configPath}下未查找到.kortrc.json文件`))
-    process.exit(1)
+type Config = {
+  storage: string
+  release: string
+  server: {
+    port: number
+    cron?: string
   }
+  workspaces: {
+    origin: string
+    webhook?: string
+    branches: string[]
+  }[]
 }
 
-function format(configRaw: ConfigRaw): ConfigCooked {
-  return configRaw.map((item) => {
-    if (typeof item === 'string')
-      return {
-        origin: item,
-        branches: ['master']
-      }
+const defaultConfig = {
+  storage: join(process.env.HOME as string, '.kort'),
+  release: join(process.env.HOME as string, 'kort-release'),
+  server: {
+    port: 3010
+  },
+  workspaces: []
+}
 
-    return { ...item, branches: item.branches || ['master'] }
+async function genDefaultConfig() {
+  const defaultConfigPath = join(process.env.HOME as string, 'kort.config.json')
+  if (!(await isFileExist(defaultConfigPath))) {
+    await writeFile(defaultConfigPath, JSON.stringify(defaultConfig))
+    console.log(`默认配置文件已生成于${defaultConfigPath}`)
+  }
+  return defaultConfigPath
+}
+
+export default async function loader(configPath?: string) {
+  if (!configPath) configPath = await genDefaultConfig()
+  if (!(await isFileExist(configPath))) {
+    console.log(red(`未找到${configPath}`))
+    process.exit(1)
+  }
+  const data = await readFile(configPath, { encoding: 'utf-8' })
+  const config = { ...defaultConfig, ...(JSON.parse(data) as Config) }
+  config.workspaces.forEach((item) => {
+    if (!item.branches) item.branches = ['master']
   })
+  return config
 }
