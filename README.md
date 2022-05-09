@@ -1,6 +1,6 @@
 # Kort
 
-轻量级node自动打包服务
+轻量node自动打包服务
 
 ## Install
 ```bash
@@ -52,7 +52,7 @@ kort install完成后, 就可以运行kort服务了
 # kort serve会启动一个http服务, 接下来你可以将此服务发布到外网, 并将此服务地址配置到远程仓库的部署钩子中, 就可以由远程仓库触发kort打包
 $ kort serve # 默认监听3010端口, 使用--port选项指定其它端口
 
-# 如果你不想在外网发布服务, 可以使用kort定时任务, 启动kort定时任务后, kort每5min会同步一次远程仓库并打包仓库变更
+# 如果你不想在外网发布服务, 可以启用kort定时任务, kort每5min会同步一次远程仓库并打包仓库变更
 $ kort serve --cron # 定时任务默认模式: --cron '*/5 * * * *' (每5min一轮, cron模式语法详见: https://crontab.guru/)
 
 ```
