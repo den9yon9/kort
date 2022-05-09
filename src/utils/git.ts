@@ -43,3 +43,8 @@ export function isEmptyRepository(path: string) {
     .then(() => Promise.resolve(false))
     .catch(() => Promise.resolve(true))
 }
+
+export async function isRepositoryHasRemote(path: string) {
+  const { stdout } = await $('git remote', { cwd: path })
+  return Boolean(stdout)
+}
