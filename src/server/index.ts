@@ -1,5 +1,6 @@
 import Koa from 'koa'
 import * as koaBody from 'koa-body'
+import configuration from 'src/configuration'
 import type Dispatcher from '../dispatch'
 import { getInitialCommit, getSHA1 } from '../utils'
 
@@ -12,6 +13,10 @@ app.use(async (ctx) => {
   ctx.body = await {
     'GET /'() {
       return 'hello world!'
+    },
+    'POST /reload'() {
+      ctx.dispatcher.workspaces = configuration()
+      return '服务配置已更新'
     },
     'POST /'() {
       return ctx.dispatcher.register(body)

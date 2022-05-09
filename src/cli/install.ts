@@ -12,11 +12,9 @@ import {
 } from '../utils'
 import configuration from '../configuration'
 
-const config = `${process.env.HOME}/.kortrc.json`
-
 // 根据配置设置workspace环境
 export default async function install() {
-  const workspaces = configuration(config)
+  const workspaces = configuration()
   for (let i = 0; i < workspaces.length; i++) {
     const workspace = workspaces[i]
     const path$ = (cmd: string) => $(cmd, { cwd: workspace.path })

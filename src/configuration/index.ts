@@ -3,7 +3,9 @@
 import loader from './loader'
 import Workspace from '../workspace/workspace'
 
-export default function configuration(configPath: string) {
+const configPath = `${process.env.HOME}/.kortrc.json`
+
+export default function configuration() {
   const config = loader(configPath)
   const workspaces: Workspace[] = []
   config

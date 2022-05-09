@@ -10,13 +10,20 @@ import { argv, cmd } from './parseArgv'
 import install from './install'
 
 const { port = 3010, cron, origin, branch, compare } = argv
-// 配置文件存放在~/.kortrc.json
-const config = `${process.env.HOME}/.kortrc.json`
 
 ;({
   help,
-  install,
-  kort: install,
+  install: () => {
+    install().then(() => {
+      axios
+        .post(`http://localhost:${port}`)
+        .then((response) => {
+          if (response) console.log(response.data)
+        })
+        .catch((err) => {})
+    })
+  },
+  kort: help,
   serve: () => serve(port),
   build: () => build(origin, branch, compare),
   version
@@ -24,7 +31,7 @@ const config = `${process.env.HOME}/.kortrc.json`
 
 async function serve(port: string) {
   // TODO: check workspaces
-  const workspaces = configuration(config)
+  const workspaces = configuration()
   const dispatcher = new Dispatcher(workspaces)
 
   app.context.dispatcher = dispatcher
@@ -39,11 +46,11 @@ async function serve(port: string) {
 function build(origin: string, branch: string, compare) {
   axios
     .post(`http://localhost:${port}/build`, { origin, branch, compare })
-    .catch((err) => {
-      console.log(`build失败, 请检查是否已启动kort服务: ${err.message}`)
-    })
     .then((response) => {
       if (response) console.log(response.data)
+    })
+    .catch((err) => {
+      console.log(`build失败, 请检查是否已启动kort服务: ${err.message}`)
     })
 }
 
