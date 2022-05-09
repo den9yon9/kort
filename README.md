@@ -73,3 +73,29 @@ $ npm i pm2 -g
 $ pm2 start kort serve
 
 ```
+
+## 部署nginx配置参考
+```
+server {
+    listen 80;
+    server_name  demo.demain.com;
+    index  index.html index.htm index.php;
+    root  /Users/zhaoning/kort-release/ee-front/page/master;
+
+    expires -1;
+
+    # 支持browserHistory路由
+    location ~ /([^\/]+)/[^.]*$ {
+        try_files $uri $uri.html $uri/ /$1/index.html /index.html;
+    }
+
+    location ~.*\.(js|css|png|jpg|gif|ico|webp|svg|mp4|mp3|ttf|woff|woff2)$
+    {
+        expires 365d;
+    }
+
+    location ~ /\. {
+        deny all;
+    }
+}
+```
