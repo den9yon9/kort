@@ -12,10 +12,9 @@ $ npm install kort -g	--registry=https://dev-page.iambanban.com/registry/
 ```
 
 ### 配置
-使用kort, 你需要在home目录下配置一份.kortrc.json来告诉kort要打包的项目信息
+使用kort, 你需要在当前目录下配置一份.kortrc.json来告诉kort要打包的项目信息
 
 ```json
-// ~/.kortrc.json
 [
   {
     // 要打包的git远程仓库地址
@@ -32,7 +31,7 @@ $ npm install kort -g	--registry=https://dev-page.iambanban.com/registry/
 
 ### 设置仓库
 
-配置或更新~/.kortrc.json后, 执行kort install使配置生效
+配置或更新.kortrc.json后, 执行kort install使配置生效
 
 ```bash
 $ kort install
@@ -61,7 +60,7 @@ $ kort serve --cron
 > 定时任务默认模式: --cron '*/5 * * * *' (每5min一轮, cron模式语法详见: https://crontab.guru/)
 
 ## 发布打包产物
-kort会将仓库源码打包到~/kort-release目录下, 你只需要到~/kort-release下找到要对应的目录发布出去即可
+kort会将仓库源码打包到当前目录的kort-release目录下, 你只需要到kort-release下找到要对应的release发布出去即可
 
 ## 守护kort进程
 使用你熟悉的方式守护kort进程, 这里以node进程管理模块pm2为例

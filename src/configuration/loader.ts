@@ -1,5 +1,6 @@
 // 读取配置文件, 格式化为统一结构
 import { readFileSync } from 'fs'
+import { red } from 'kolorist'
 import { resolve } from 'path'
 
 type ConfigCooked = Array<{
@@ -19,7 +20,8 @@ export default function loader() {
     return format(config)
   } catch (err) {
     console.log(err.message)
-    throw new Error(`当前目录未查找到.kortrc.json配置文件`)
+    console.log(red(`当前目录${configPath}下未查找到.kortrc.json文件`))
+    process.exit(1)
   }
 }
 
