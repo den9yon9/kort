@@ -16,7 +16,7 @@ app.use(async (ctx) => {
     },
     'POST /reload'() {
       ctx.dispatcher.workspaces = configuration()
-      return '服务配置已更新'
+      return 'kort服务已更新'
     },
     'POST /'() {
       return ctx.dispatcher.register(body)

@@ -18,7 +18,7 @@ const { port = 3010, cron, origin, branch, compare } = argv
       axios
         .post(`http://localhost:${port}/reload`)
         .then((response) => {
-          if (response) console.log(response.data)
+          if (response) console.log(response.data + '\n')
         })
         .catch((err) => {
           console.log(yellow(`下一步: 运行kort serve启动kort服务\n`))

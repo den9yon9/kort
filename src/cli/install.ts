@@ -119,5 +119,5 @@ export default async function install() {
     )
   }
 
-  console.log(`\n${'   所有仓库设置完成!'}\n`)
+  console.log(`\n${'所有仓库设置完成!'}\n`)
 }
