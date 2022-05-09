@@ -48,14 +48,16 @@ function build(origin: string, branch: string, compare) {
 }
 
 function help() {
-  // TODO: help
-  // console.log(`
-  //   kort 下载&配置仓库
-  //   kort install 下载&配置仓库
-  //   kort serve --port 3008 --cron '*5 * * * *' // 运行服务
-  //   kort build --origin origin --branch master --compare compare
-  //   kort version
-  // `)
+  console.log(`
+kort <command>
+
+Usage:
+
+kort install
+kort serve [--port <port>] [--cron [<pattern>]]     
+kort build --origin <origin> --branch <branch> [--compare <compare>]
+
+`)
 }
 
 function version() {
