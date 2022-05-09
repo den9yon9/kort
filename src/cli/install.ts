@@ -120,9 +120,4 @@ export default async function install() {
   }
 
   console.log(`\n${'   所有仓库设置完成!'}\n`)
-  console.log(
-    yellow(
-      `   下一步: 运行kort serve启动kort服务, 如果你已经启动了kort服务, 请重启服务使配置生效\n`
-    )
-  )
 }

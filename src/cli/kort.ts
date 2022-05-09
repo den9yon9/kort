@@ -2,7 +2,7 @@
 
 import app from '../server'
 import configuration from '../configuration'
-import { green } from 'kolorist'
+import { green, yellow } from 'kolorist'
 import Dispatcher from '../dispatch'
 import Schedule from '../schedule'
 import axios from 'axios'
@@ -20,7 +20,9 @@ const { port = 3010, cron, origin, branch, compare } = argv
         .then((response) => {
           if (response) console.log(response.data)
         })
-        .catch((err) => {})
+        .catch((err) => {
+          console.log(yellow(`下一步: 运行kort serve启动kort服务\n`))
+        })
     })
   },
   kort: help,
