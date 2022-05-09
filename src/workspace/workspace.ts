@@ -1,4 +1,4 @@
-import { join } from 'path'
+import { join, resolve } from 'path'
 import { parseOrigin } from '../utils'
 import notice from '../webhook'
 import { Project, Task } from '../types'
@@ -7,8 +7,9 @@ import buildProject from './buildProject'
 import { mkdir } from 'fs/promises'
 
 const multiRemote = false
-const kortRoot = join(process.env.HOME as string, '.kort')
-const kortReleaseRoot = join(process.env.HOME as string, 'kort-release')
+
+const kortRoot = resolve('.', '.kort')
+const kortReleaseRoot = resolve('.', 'kort-release')
 
 export default class Workspace {
   origin: string

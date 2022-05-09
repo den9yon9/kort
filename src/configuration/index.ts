@@ -3,10 +3,8 @@
 import loader from './loader'
 import Workspace from '../workspace/workspace'
 
-const configPath = `${process.env.HOME}/.kortrc.json`
-
 export default function configuration() {
-  const config = loader(configPath)
+  const config = loader()
   const workspaces: Workspace[] = []
   config
     .map((configItem) => new Workspace(configItem))
