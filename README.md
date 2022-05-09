@@ -18,8 +18,9 @@ $ npm install kort -g	--registry=https://dev-page.iambanban.com/registry/
 // ~/.kortrc.json
 [
   {
+    // 要打包的git远程仓库地址
     "origin": "repository1.git",
-    // 当源码不符合打包条件时, 或者打包失败时, 我们希望kort给我们适当的反馈, kort会将打包消息发送给webhook
+    // 当源码有错误或者不符合打包条件时导致打包失败时, 我们希望kort给用户适当的反馈, kort会将打包消息发送给webhook
     "webhook": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=bc7871a1-7459-4c7c-8e1e-35108f7583fc",
     // kort缺省打包分支是master, 如果你要打包其它分支可以这样配置
     "branches": ["master", "dev"]
@@ -31,7 +32,7 @@ $ npm install kort -g	--registry=https://dev-page.iambanban.com/registry/
 
 ### 设置仓库
 
-增加或更新~/.kortrc.json后, 需要执行kort install使配置生效
+配置或更新~/.kortrc.json后, 执行kort install使配置生效
 
 ```bash
 # ~/.kortrc.json
@@ -48,12 +49,11 @@ kort install完成后, 就可以运行kort服务了
 
 ```bash
 
-# kort serve会启动一个http服务, 默认监听3010端口, 接下来你可以将此服务发布到外网, 并将此服务地址链接配置到远程仓库的webhook钩子中, 就可以由远程仓库触发kort打包
-
-$ kort serve
+# kort serve会启动一个http服务, 接下来你可以将此服务发布到外网, 并将此服务地址配置到远程仓库的部署钩子中, 就可以由远程仓库触发kort打包
+$ kort serve # 默认监听3010端口, 使用--port选项指定其它端口
 
 # 如果你不想在外网发布服务, 可以使用kort定时任务, 启动kort定时任务后, kort每5min会同步一次远程仓库并打包仓库变更
-$ kort serve --cron
+$ kort serve --cron # 定时任务默认模式: --cron '*/5 * * * *' (每5min一轮, cron模式语法详见: https://crontab.guru/)
 
 ```
 
