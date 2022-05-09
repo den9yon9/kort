@@ -1,6 +1,6 @@
 import Koa from 'koa'
 import * as koaBody from 'koa-body'
-import configuration from 'src/configuration'
+import configuration from '../configuration'
 import type Dispatcher from '../dispatch'
 import { getInitialCommit, getSHA1 } from '../utils'
 
