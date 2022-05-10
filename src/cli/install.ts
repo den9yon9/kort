@@ -1,6 +1,7 @@
 import { mkdir, rm } from 'fs/promises'
-import { yellow } from 'kolorist'
+import { red, yellow } from 'kolorist'
 import { join } from 'path'
+import type Workspace from 'src/workspace/workspace'
 import {
   $,
   getInitialCommit,
@@ -10,12 +11,9 @@ import {
   isRepository,
   stream$
 } from '../utils'
-import configuration from '../configuration'
 
 // 根据配置设置workspace环境
-export default async function install() {
-  const workspaces = await configuration()
-
+export default async function install(workspaces: Workspace[]) {
   for (let i = 0; i < workspaces.length; i++) {
     const workspace = workspaces[i]
     const source$ = (cmd: string) => $(cmd, { cwd: workspace.source })
@@ -43,9 +41,12 @@ export default async function install() {
           await source$(`git checkout ${branch}`)
           log(`打包分支${branch}已创建`)
         } catch (err) {
-          throw new Error(
-            `${workspace.origin}仓库中没有分支${branch}, 请检查配置的打包分支是否正确`
+          console.log(
+            red(
+              `打包分支设置失败, 请检查${workspace.origin}中是否存在${branch}分支`
+            )
           )
+          throw err
         }
       })
     )
@@ -66,7 +67,9 @@ export default async function install() {
 
     // dist是否空仓库
     if (await isEmptyRepository(workspace.dist)) {
-      await dist$(`echo 'hello world!' > README.md`)
+      await dist$(
+        `echo ${`此仓库是${workspace.origin}的打包产物仓库, 你可以clone此仓库检出想要发布的分支对外发布`} > README.md`
+      )
       await dist$(`git add .`)
       await dist$('git commit -am "initial commit"')
       log(`dist仓库初始提交完成`)
