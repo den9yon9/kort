@@ -15,7 +15,7 @@ function help() {
     [
       'kort install',
       'kort serve [--port <port>] [--cron [<pattern>]]',
-      'kort build --port <port> --origin <origin> --branch <branch> [--compare <compare>]'
+      'kort build [--port <port>] --origin <origin> --branch <branch> [--compare <compare>]'
     ].join('\n')
   )
 }
@@ -28,18 +28,18 @@ function version() {
   })
 }
 
-if (['kort', 'help', 'version'].includes(cmd)) {
+if (['kort', 'help', 'version', 'build'].includes(cmd)) {
   ;({
     help,
     kort: help,
-    version
+    version,
+    build: () => build(port, origin, branch, compare)
   }[cmd]?.())
 } else {
   configuration().then((workspaces) => {
     ;({
       serve: () => serve(port, workspaces, cron),
-      install: () => install(workspaces),
-      build: () => build(port, origin, branch, compare)
+      install: () => install(workspaces)
     }[cmd]?.())
   })
 }

@@ -1,20 +1,24 @@
 # Kort
 
-轻量node自动打包服务
+轻量前端项目自动打包服务
 
-## Install
+## 安装kort及其依赖
+kort 依赖 nodejs(>=14)和git, 请确保你的环境已安装这些依赖 
+
 ```bash
-# 安装yarn pnpm 
+# 安装前端项目包管理工具 yarn pnpm 
 $ npm install -g yarn pnpm
 
 # 安装kort
 $ npm install kort -g	--registry=https://dev-page.iambanban.com/registry/
 ```
 
-### 配置
-使用kort, 你需要在当前目录下配置一份.kortrc.json来告诉kort要打包的项目信息
+### 创建kort项目
+
+新建一个目录, 在目录里创建一份kort.json, 此目录即为一个kort项目, kort根据kort.json内的配置在此目录进行打包工作, 并将打包产物拷贝到此目录内
 
 ```json
+// kort.json
 [
   {
     // 要打包的git远程仓库地址
@@ -30,12 +34,15 @@ $ npm install kort -g	--registry=https://dev-page.iambanban.com/registry/
 
 
 ### 设置仓库
-
-配置或更新.kortrc.json后, 执行kort install使配置生效
+在上一步创建的kort项目内执行
 
 ```bash
 $ kort install
 ```
+
+kort将会根据kort.json中的配置去clone源码仓库,并准备好打包环境
+
+> tips: 每次更新kort.json后, 都需要执行kort install使配置生效
 
 
 ### 运行kort服务
@@ -57,10 +64,9 @@ $ kort serve --port 4000
 ```
 $ kort serve --cron
 ```
-> 定时任务默认模式: --cron '*/5 * * * *' (每5min一轮, cron模式语法详见: https://crontab.guru/)
 
 ## 发布打包产物
-kort会将仓库源码打包到当前目录的kort-release目录下, 你只需要到kort-release下找到要对应的release发布出去即可
+kort会将仓库源码打包到kort项目根目录下, 你只需要到找到要对应的dist发布出去即可
 
 ## 守护kort进程
 使用你熟悉的方式守护kort进程, 这里以node进程管理模块pm2为例
@@ -70,7 +76,7 @@ kort会将仓库源码打包到当前目录的kort-release目录下, 你只需�
 $ npm i pm2 -g
 
 # 守护kort服务
-$ pm2 start kort serve
+$ pm2 start kort -- serve
 
 ```
 
