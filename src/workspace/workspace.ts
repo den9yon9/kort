@@ -13,26 +13,20 @@ export default class Workspace {
   webhook?: string
   hostname: string
   pathname: string
-  storage: string
-  release: string
+  storage = resolve('.', '.kort', 'storage')
+  release = resolve('.')
   constructor({
     origin,
     branches,
-    webhook,
-    storage,
-    release
+    webhook
   }: {
     origin: string
     branches: string[]
     webhook?: string
-    storage: string
-    release: string
   }) {
     this.origin = origin
     this.branches = branches
     this.webhook = webhook
-    this.storage = storage
-    this.release = release
     const { hostname, pathname } = parseOrigin(origin)
     if (!hostname || !pathname) throw new Error(`origin: ${origin}格式错误`)
     this.hostname = hostname

@@ -2,16 +2,16 @@
 
 import app from '../server'
 import configuration from '../configuration'
-import { green, yellow } from 'kolorist'
+import { green } from 'kolorist'
 import Dispatcher from '../dispatch'
 import Schedule from '../schedule'
 import axios from 'axios'
 import { argv, cmd } from './parseArgv'
-import setup from './setup'
+import install from './install'
 
-const { origin, branch, compare, cron, config, port } = argv
+const { origin, branch, compare, cron, port = 3010 } = argv
 
-configuration(config).then(({ server, workspaces }) => {
+configuration().then((workspaces) => {
   ;({
     help,
     install,
@@ -21,25 +21,13 @@ configuration(config).then(({ server, workspaces }) => {
     version
   }[cmd]?.())
 
-  async function install() {
-    await setup()
-    try {
-      const response = await axios.post(
-        `http://localhost:${port || server.port}/reload`
-      )
-      if (response) console.log(response.data + '\n')
-    } catch (err) {
-      console.log(yellow(`下一步: 运行kort serve启动kort服务\n`))
-    }
-  }
-
   async function serve() {
     // TODO: check workspaces
     const dispatcher = new Dispatcher(workspaces)
 
     app.context.dispatcher = dispatcher
-    app.listen(port || server.port)
-    console.log(`\n服务已启动port: ${green(port || server.port)}`)
+    app.listen(port)
+    console.log(`\n服务已启动port: ${green(port)}`)
     if (!cron) return
     const pattern = typeof cron === 'boolean' ? '*/5 * * * *' : cron
     new Schedule(pattern, dispatcher)
@@ -48,14 +36,11 @@ configuration(config).then(({ server, workspaces }) => {
 
   async function build(origin: string, branch: string, compare) {
     try {
-      const response = await axios.post(
-        `http://localhost:${port || server.port}/build`,
-        {
-          origin,
-          branch,
-          compare
-        }
-      )
+      const response = await axios.post(`http://localhost:${port}/build`, {
+        origin,
+        branch,
+        compare
+      })
       if (response) console.log(response.data)
     } catch (err) {
       console.log(`build失败, 请检查是否已启动kort服务: ${err.message}`)

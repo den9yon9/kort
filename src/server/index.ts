@@ -1,6 +1,5 @@
 import Koa from 'koa'
 import * as koaBody from 'koa-body'
-import configuration from '../configuration'
 import type Dispatcher from '../dispatch'
 import { getInitialCommit, getSHA1 } from '../utils'
 
@@ -13,11 +12,6 @@ app.use(async (ctx) => {
   ctx.body = await {
     'GET /'() {
       return 'hello world!'
-    },
-    async 'POST /reload'() {
-      const { workspaces } = await configuration(body)
-      ctx.dispatcher.workspaces = workspaces
-      return 'kort服务已更新'
     },
     'POST /'() {
       return ctx.dispatcher.register(body)

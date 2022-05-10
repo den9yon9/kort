@@ -13,12 +13,11 @@ import {
 import configuration from '../configuration'
 
 // 根据配置设置workspace环境
-export default async function setup(configPath?: string) {
-  const { workspaces } = await configuration(configPath)
+export default async function install() {
+  const workspaces = await configuration()
 
   for (let i = 0; i < workspaces.length; i++) {
     const workspace = workspaces[i]
-    const path$ = (cmd: string) => $(cmd, { cwd: workspace.path })
     const source$ = (cmd: string) => $(cmd, { cwd: workspace.source })
     const dist$ = (cmd: string) => $(cmd, { cwd: workspace.dist })
     const log = (data) => console.log(`${yellow(workspace.origin)}: ${data}`)
@@ -34,23 +33,19 @@ export default async function setup(configPath?: string) {
       log('开始clone...')
       await stream$(`git clone ${workspace.origin} source`, workspace.path)
       log('clone完成')
-    } else {
-      await stream$(`git fetch --prune`, workspace.source)
-    }
+    } else await stream$(`git fetch --prune`, workspace.source)
 
     // 准备打包分支
     await Promise.all(
       workspace.branches.map(async (branch) => {
-        if (!(await isBranchExist(workspace.source, branch))) {
-          try {
-            await source$(`git checkout ${branch}`)
-            log(`打包分支${branch}已创建`)
-          } catch (err) {
-            throw new Error(
-              `${workspace.origin}仓库中没有分支${branch}, 请检查配置的打包分支是否正确`
-            )
-          }
-        } else {
+        if (await isBranchExist(workspace.source, branch)) return
+        try {
+          await source$(`git checkout ${branch}`)
+          log(`打包分支${branch}已创建`)
+        } catch (err) {
+          throw new Error(
+            `${workspace.origin}仓库中没有分支${branch}, 请检查配置的打包分支是否正确`
+          )
         }
       })
     )
@@ -121,4 +116,10 @@ export default async function setup(configPath?: string) {
   }
 
   console.log(`\n${'所有仓库设置完成!'}\n`)
+
+  console.log(
+    yellow(
+      `\n下一步: 运行kort serve启动kort服务 (如果kort服务已启动, 请重启服务以使配置生效)\n`
+    )
+  )
 }
