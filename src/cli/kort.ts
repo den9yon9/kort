@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 
 import configuration from '../configuration'
-import pkg from '../../package.json'
 import { argv, cmd } from './parseArgv'
 import install from './install'
 import serve from './serve'
 import build from './build'
+import { resolve } from 'path'
+import { readFile } from 'fs/promises'
 
 const { origin, branch, compare, cron, port = 3010 } = argv
 
@@ -20,7 +21,11 @@ function help() {
 }
 
 function version() {
-  console.log(pkg.version)
+  readFile(resolve(process.argv[1], '..', '..', '..', 'package.json'), {
+    encoding: 'utf-8'
+  }).then((data) => {
+    console.log(JSON.parse(data).version)
+  })
 }
 
 if (['kort', 'help', 'version'].includes(cmd)) {
