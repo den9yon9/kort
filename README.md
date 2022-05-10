@@ -2,7 +2,7 @@
 
 轻量前端项目自动打包服务
 
-## 安装kort及其依赖
+### 安装kort及其依赖
 kort 依赖 nodejs(>=14)和git, 请确保你的环境已安装这些依赖 
 
 ```bash
@@ -33,7 +33,7 @@ $ npm install kort -g	--registry=https://dev-page.iambanban.com/registry/
 ```
 
 
-### 设置仓库
+### 设置打包环境
 在上一步创建的kort项目内执行
 
 ```bash
@@ -42,12 +42,12 @@ $ kort install
 
 kort将会根据kort.json中的配置去clone源码仓库,并准备好打包环境
 
-> tips: 每次更新kort.json后, 都需要执行kort install使配置生效
+> tips: 更新kort.json后, 执行kort install使配置生效
 
 
 ### 运行kort服务
 
-仓库设置完成后, 就可以开启kort服务了
+设置好打包环境后, 就可以开启kort服务了
 ```bash
 $ kort serve
 ```
@@ -65,10 +65,10 @@ $ kort serve --port 4000
 $ kort serve --cron
 ```
 
-## 发布打包产物
+### 发布打包产物
 kort会将仓库源码打包到kort项目根目录下, 你只需要到找到要对应的dist发布出去即可
 
-## 守护kort进程
+### 守护kort进程
 使用你熟悉的方式守护kort进程, 这里以node进程管理模块pm2为例
 
 ```bash
@@ -80,7 +80,7 @@ $ pm2 start kort -- serve
 
 ```
 
-## 部署nginx配置参考
+### 部署nginx配置参考
 ```
 server {
     listen 80;
