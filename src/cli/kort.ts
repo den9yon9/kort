@@ -5,9 +5,6 @@ import { argv, cmd } from './parseArgv'
 import install from './install'
 import serve from './serve'
 import build from './build'
-import { resolve } from 'path'
-import { readFile } from 'fs/promises'
-import pkg from '../../package.json'
 
 const { origin, branch, compare, cron, port = 3010 } = argv
 
@@ -22,8 +19,7 @@ function help() {
 }
 
 function version() {
-  console.log(pkg)
-  console.log(pkg.version)
+  console.log(require('../../package.json').version)
 }
 
 if (['kort', 'help', 'version', 'build'].includes(cmd)) {
