@@ -31,6 +31,7 @@ export default async function install(workspaces: Workspace[]) {
       log('开始clone...')
       await stream$(`git clone ${workspace.origin} source`, workspace.path)
       log('clone完成')
+      await source$(`git config --local credential.helper store`)
     } else await stream$(`git fetch --prune`, workspace.source)
 
     // 准备打包分支
@@ -60,6 +61,7 @@ export default async function install(workspaces: Workspace[]) {
     // 初始化dist仓库
     if (!(await isRepository(workspace.dist))) {
       await dist$(`git init`)
+      await dist$(`git config --local credential.helper store`)
       await dist$('git config --local user.name kort')
       await dist$('git config --local user.email kort@fake.local')
       log(`dist仓库已创建`)
