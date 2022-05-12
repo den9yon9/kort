@@ -22,11 +22,11 @@ $ npm install -g yarn pnpm kort --registry=https://dev-page.iambanban.com/regist
 [
   {
     // 要打包的git远程仓库地址
-    "origin": "https://hostName.com/ownerName/repositoryName.git",
+    "origin": "https://hostname.com/owner/repository.git",
     // 当源码有错误或者不符合打包条件而导致打包失败时, 我们希望kort给用户适当的反馈, kort会将打包消息发送给webhook
     "webhook": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=bc7871a1-7459-4c7c-8e1e-35108f7583fc",
     // kort默认打包master分支, 如果你要打包其它分支可以这样配置
-    "branches": ["master", "dev"]
+    "branches": ["test", "dev"]
   }
 ]
 ```
@@ -37,8 +37,7 @@ $ npm install -g yarn pnpm kort --registry=https://dev-page.iambanban.com/regist
 执行 kort install 命令, kort将会根据kort.json中的配置去clone源码仓库, 准备打包环境
 
 ```bash
-# kort install [<projectPath>] # 默认当前路径
-$ kort install ./my-project # 默认当前路径
+$ kort install  # 默认当前路径
 ```
 
 > tips: 更新kort.json后, 也需要执行kort install使配置生效
@@ -49,13 +48,12 @@ $ kort install ./my-project # 默认当前路径
 安装好kort项目依赖后, 就可以开启kort服务了
 ```bash
 
-# kort serve [<projectPath>] # 默认当前路径
-$ kort serve ./my-project
+$ kort serve # 默认当前路径
 ```
 
 kort serve默认监听3010端口, 你可以使用--port选项指定其它端口
 ```bash
-$ kort serve ./my-project --port 4000
+$ kort serve --port 4000
 ```
 
 接下来你可以将kort服务发布到外网, 并将此服务地址配置到远程仓库的部署钩子中, 就可以由远程仓库触发kort打包
@@ -63,7 +61,7 @@ $ kort serve ./my-project --port 4000
 ### kort定时任务
 如果你不想在外网发布服务, 可以启用kort定时任务, kort每5min会同步一次远程仓库并打包仓库变更
 ```bash
-$ kort serve ./my-project --cron
+$ kort serve --cron
 ```
 
 ### 守护kort进程
@@ -84,9 +82,9 @@ $ pm2 start kort -- serve ./my-project
 ```
 server {
     listen 80;
-    server_name  demo.demain.com;
+    server_name  hostname.com;
     index  index.html index.htm index.php;
-    root  projectPath/ee-front/page/master;
+    root  my-project/owner/repository/master;
 
     expires -1;
 
