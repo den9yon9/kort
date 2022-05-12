@@ -3,15 +3,14 @@ import { TaskState } from '../webhook'
 import markdown, {
   bold,
   comment,
-  info,
   correct,
   list,
   star,
   warning,
   wrong,
   pair,
-  br,
-  success
+  success,
+  title
 } from '../wecom/markdown'
 
 const taskTitleMap = {
@@ -33,16 +32,16 @@ export default function wecom(url, data: TaskState) {
     list([
       bold(taskTitleMap[data.state]),
       data.error ? pair(data.error) : '',
-      bold(comment('--任务信息--')),
+      title('任务信息'),
       pair(data.task),
-      bold(comment('--提交记录--')),
+      title('提交记录'),
       list(data.commits.map(star)),
-      bold(
-        comment(
-          { pending: '--变更项目--', fulfilled: '--打包结果--', rejected: '--打包结果--' }[
-            data.state
-          ]
-        )
+      title(
+        {
+          pending: '变更项目',
+          fulfilled: '打包结果',
+          rejected: '打包结果'
+        }[data.state]
       ),
       list(data.projects.map(projectMarkdorn))
     ])

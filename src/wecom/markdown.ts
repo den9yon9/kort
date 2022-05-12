@@ -96,7 +96,7 @@ export function pair(obj: object) {
 }
 
 export function title(text: string) {
-  return `${br}${bold(comment(text))}`
+  return `${br}${bold(comment(`--${text}--`))}`
 }
 
 export default async function markdown(url: string, content: string) {
