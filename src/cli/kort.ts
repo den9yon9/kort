@@ -9,11 +9,15 @@ import build from './build'
 const { origin, branch, compare, cron, port = 3010, _ } = argv
 
 function help() {
+  console.log(`Version ${require('../../package.json').version}`)
   console.log(
     [
-      'kort install',
-      'kort serve [--port <port>] [--cron [<pattern>]]',
-      'kort build [--port <port>] --origin <origin> --branch <branch> [--compare <compare>]'
+      'Useage:',
+      '\n',
+      'kort install [<projectPath>]',
+      'kort serve [<projectPath>] [--port <port>] [--cron [<pattern>]]',
+      'kort build  --origin <origin> --branch <branch> [--compare <compare>] [--port <port>]',
+      '\n'
     ].join('\n')
   )
 }
