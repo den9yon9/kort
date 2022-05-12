@@ -83,9 +83,9 @@ export default class Workspace {
           sender: task.sender,
           repository: this.path.replace(`${this.storage}/`, ''),
           branch: task.branch,
-          compare: task.compare_url,
-          commits
+          compare: task.compare_url
         },
+        commits,
         projects
       })
 
@@ -99,7 +99,7 @@ export default class Workspace {
               await $(`git reset HEAD --hard`, { cwd: this.source })
               throw {
                 reason:
-                  '拒绝发布: 打完包后源码有变更, 请检查你的build命令是否合理',
+                  '拒绝发布: 打包后发现源码有变更, 请检查你的npm build脚本是否合理',
                 stdout
               }
             }
@@ -133,9 +133,9 @@ export default class Workspace {
           sender: task.sender,
           repository: this.path.replace(`${this.storage}/`, ''),
           branch: task.branch,
-          compare: task.compare_url,
-          commits
+          compare: task.compare_url
         },
+        commits,
         projects
       })
     } catch (err) {
@@ -146,9 +146,9 @@ export default class Workspace {
           sender: task.sender,
           repository: this.path.replace(`${this.storage}/`, ''),
           branch: task.branch,
-          compare: task.compare_url,
-          commits
+          compare: task.compare_url
         },
+        commits,
         projects
       })
     }

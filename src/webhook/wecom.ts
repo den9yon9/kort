@@ -33,6 +33,9 @@ export default function wecom(url, data: TaskState) {
       bold(taskTitleMap[data.state]),
       data.error ? pair(data.error) : '',
       pair(data.task),
+      comment('提交记录'),
+      list(data.commits.map(star)),
+      comment('变更项目'),
       list(data.projects.map(projectMarkdorn))
     ])
   )

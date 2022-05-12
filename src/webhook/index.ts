@@ -10,8 +10,8 @@ export type TaskState = {
     repository: string
     branch: string
     compare: string
-    commits: string[]
   }
+  commits: string[]
   projects: Project[]
 }
 

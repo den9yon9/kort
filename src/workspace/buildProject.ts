@@ -14,7 +14,7 @@ async function checkProjectNeedBuild(project: string) {
     encoding: 'utf-8'
   })
   const pkgInfo = JSON.parse(pkgData)
-  if (!pkgInfo.scripts.build) throw { reason: `${project}没有提供build脚本` }
+  if (!pkgInfo.scripts.build) throw { reason: '没有提供build脚本' }
 }
 
 async function installProject(project: string) {
