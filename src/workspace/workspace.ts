@@ -93,6 +93,17 @@ export default class Workspace {
         projects.map(async (project) => {
           try {
             await buildProject(project.path)
+
+            const { stdout } = await $(`git status -s`, { cwd: this.source })
+            if (stdout) {
+              await $(`git reset HEAD --hard`, { cwd: this.source })
+              throw {
+                reason:
+                  '拒绝发布: 打完包后源码有变更, 请检查你的build命令是否合理',
+                stdout
+              }
+            }
+
             await $(`git checkout ${task.branch}`, { cwd: this.dist })
             const projectDist = join(project.path, 'dist')
             const targetDist = project.path.replace(this.source, this.dist)
@@ -105,7 +116,7 @@ export default class Workspace {
             project.state = 'fulfilled'
           } catch (err) {
             project.state = 'rejected'
-            project.reason = { ...err, message: err.message }
+            project.reason = err
           }
         })
       )
