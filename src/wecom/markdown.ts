@@ -29,7 +29,7 @@ export function warning(text: string) {
 }
 
 export function info(text: string) {
-  return color('blue', text)
+  return color('#40a9ff', text)
 }
 
 export function success(text: string) {

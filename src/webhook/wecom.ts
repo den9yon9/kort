@@ -10,12 +10,13 @@ import markdown, {
   warning,
   wrong,
   pair,
-  br
+  br,
+  success
 } from '../wecom/markdown'
 
 const taskTitleMap = {
-  pending: info('开始处理'),
-  fulfilled: info('处理完成'),
+  pending: success('开始处理'),
+  fulfilled: success('处理完成'),
   rejected: warning('处理失败')
 }
 
@@ -32,10 +33,17 @@ export default function wecom(url, data: TaskState) {
     list([
       bold(taskTitleMap[data.state]),
       data.error ? pair(data.error) : '',
+      bold(comment('--任务信息--')),
       pair(data.task),
-      bold(info('提交记录')),
+      bold(comment('--提交记录--')),
       list(data.commits.map(star)),
-      bold(info('变更项目')),
+      bold(
+        comment(
+          { pending: '--变更项目--', fulfilled: '--打包结果--', rejected: '--打包结果--' }[
+            data.state
+          ]
+        )
+      ),
       list(data.projects.map(projectMarkdorn))
     ])
   )
