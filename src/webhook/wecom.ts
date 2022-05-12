@@ -10,7 +10,10 @@ import markdown, {
   wrong,
   pair,
   success,
-  title
+  title,
+  br,
+  quote,
+  dot
 } from '../wecom/markdown'
 
 const taskTitleMap = {
@@ -19,7 +22,7 @@ const taskTitleMap = {
   rejected: warning('处理失败')
 }
 
-const projectMarkdorn = ({ name, reason, state }: Project) =>
+const projectMarkdown = ({ name, reason, state }: Project) =>
   ({
     pending: () => star(comment(name)),
     fulfilled: () => correct(comment(name)),
@@ -32,18 +35,23 @@ export default function wecom(url, data: TaskState) {
     list([
       bold(taskTitleMap[data.state]),
       data.error ? pair(data.error) : '',
-      title('任务信息'),
       pair(data.task),
-      title('提交记录'),
-      list(data.commits.map(star)),
-      title(
-        {
-          pending: '变更项目',
-          fulfilled: '打包结果',
-          rejected: '打包结果'
-        }[data.state]
+      bold(comment('提交记录')),
+      quote(list(data.commits.map((item) => star(comment(item))))),
+      bold(
+        comment(
+          {
+            pending: '变更项目',
+            fulfilled: '打包结果',
+            rejected: '打包结果'
+          }[data.state]
+        )
       ),
-      list(data.projects.map(projectMarkdorn))
+      {
+        pending: quote(list(data.projects.map(projectMarkdown))),
+        fulfilled: list(data.projects.map(projectMarkdown)),
+        rejected: list(data.projects.map(projectMarkdown))
+      }[data.state]
     ])
   )
     .then((response) => {

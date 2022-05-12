@@ -31,7 +31,7 @@ app.use(async (ctx) => {
         ref: branch,
         compare_url: compare,
         repository: { html_url: workspace.origin },
-        sender: { login: 'server' }
+        sender: { login: 'manual' }
       })
     }
   }[`${method} ${path}`]?.()

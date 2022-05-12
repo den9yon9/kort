@@ -10,8 +10,9 @@ type WorkspaceConfig = {
   branches?: string[]
 }
 
-export default async function loader() {
-  const configPath = join('.', 'kort.json')
+export default async function loader(path: string) {
+  const configPath = join(path, 'kort.json')
+  console.log(`配置文件: ${configPath}`)
   if (!(await isFileExist(configPath))) {
     console.log(red(`\n当前目录${resolve('.')}未找到kort.json\n`))
     process.exit(1)

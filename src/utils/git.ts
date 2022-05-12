@@ -23,7 +23,7 @@ export const getInitialCommit = async (path: string) => {
 export const shortSelector = (selector: string) =>
   selector
     .split('...')
-    .map((item) => item.substring(0, 6))
+    .map((item) => item.substring(0, 8))
     .join('...')
 
 export function isBranchExist(path: string, branch: string) {

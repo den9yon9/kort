@@ -6,7 +6,7 @@ import install from './install'
 import serve from './serve'
 import build from './build'
 
-const { origin, branch, compare, cron, port = 3010 } = argv
+const { origin, branch, compare, cron, port = 3010, _ } = argv
 
 function help() {
   console.log(
@@ -30,7 +30,7 @@ if (['kort', 'help', 'version', 'build'].includes(cmd)) {
     build: () => build(port, origin, branch, compare)
   }[cmd]?.())
 } else {
-  configuration().then((workspaces) => {
+  configuration(_[0] || '.').then((workspaces) => {
     ;({
       serve: () => serve(port, workspaces, cron),
       install: () => install(workspaces)

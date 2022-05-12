@@ -13,16 +13,17 @@ export default class Workspace {
   webhook?: string
   hostname: string
   pathname: string
-  storage = resolve('.', '.kort', 'storage')
-  release = resolve('.')
+  dir: string
   constructor({
     origin,
     branches,
-    webhook
+    webhook,
+    dir
   }: {
     origin: string
     branches: string[]
     webhook?: string
+    dir
   }) {
     this.origin = origin
     this.branches = branches
@@ -31,6 +32,15 @@ export default class Workspace {
     if (!hostname || !pathname) throw new Error(`origin: ${origin}格式错误`)
     this.hostname = hostname
     this.pathname = pathname
+    this.dir = dir
+  }
+
+  get storage() {
+    return resolve(this.dir, '.kort', 'storage')
+  }
+
+  get release() {
+    return this.dir
   }
 
   get path() {
@@ -71,6 +81,7 @@ export default class Workspace {
   }
 
   async handleTask(task: Task) {
+    console.log(this.source)
     await $(`git checkout ${task.branch}`, { cwd: this.source })
     await $('git pull', { cwd: this.source })
     const commits = await gitlog(task.compare, this.source)
@@ -83,7 +94,7 @@ export default class Workspace {
           sender: task.sender,
           repository: this.path.replace(`${this.storage}/`, ''),
           branch: task.branch,
-          compare: task.compare_url
+          compare: task.compare
         },
         commits,
         projects
@@ -133,7 +144,7 @@ export default class Workspace {
           sender: task.sender,
           repository: this.path.replace(`${this.storage}/`, ''),
           branch: task.branch,
-          compare: task.compare_url
+          compare: task.compare
         },
         commits,
         projects
@@ -146,7 +157,7 @@ export default class Workspace {
           sender: task.sender,
           repository: this.path.replace(`${this.storage}/`, ''),
           branch: task.branch,
-          compare: task.compare_url
+          compare: task.compare
         },
         commits,
         projects
