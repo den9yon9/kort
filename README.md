@@ -13,7 +13,7 @@ $ npm install -g yarn pnpm kort --registry=https://dev-page.iambanban.com/regist
 
 ### 创建kort项目
 
-kort项目是拥有一份kort.json文件的目录, kort根据kort.json内的配置在此目录工作, 并将打包产物生成在此目录内供你发布
+kort项目是拥有一份kort.json文件的目录, kort会根据kort.json将打完包的代码生成在kort项目中供你发布
 
 
 ```json
@@ -36,7 +36,7 @@ kort项目是拥有一份kort.json文件的目录, kort根据kort.json内的配�
 创建并配置好kort.json后, 执行kort install 命令, kort将会根据kort.json中的配置去clone源码仓库,并准备好打包环境
 
 ```bash
-$ kort install
+$ kort install <projectPath> # 默认projectPath为当前路径
 ```
 
 > tips: 更新kort.json后, 也需要执行kort install使配置生效
@@ -46,7 +46,7 @@ $ kort install
 
 设置好打包环境后, 就可以开启kort服务了
 ```bash
-$ kort serve
+$ kort serve <projectPath> # 默认projectPath为当前路径
 ```
 
 kort serve默认监听3010端口, 你可以使用--port选项指定其它端口

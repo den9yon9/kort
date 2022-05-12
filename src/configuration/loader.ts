@@ -1,6 +1,6 @@
 // 读取配置文件, 格式化为统一结构
 import { readFile } from 'fs/promises'
-import { red } from 'kolorist'
+import { red, yellow } from 'kolorist'
 import { join, resolve } from 'path'
 import { isFileExist } from '../utils'
 
@@ -14,7 +14,10 @@ export default async function loader(path: string) {
   const configPath = join(path, 'kort.json')
   console.log(`配置文件: ${configPath}`)
   if (!(await isFileExist(configPath))) {
-    console.log(red(`\n当前目录${resolve('.')}未找到kort.json\n`))
+    console.log(red(`\n当前路径未找到kort.json\n`))
+
+    console.log(yellow(`tips: kort默认项目为当前目录, 你也可以指定项目目录如: \n\n      kort install <projectPath>\n      kort serve <projectPath>\n`))
+
     process.exit(1)
   }
   const data = await readFile(configPath, { encoding: 'utf-8' })
