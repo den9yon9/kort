@@ -81,7 +81,6 @@ export default class Workspace {
   }
 
   async handleTask(task: Task) {
-    console.log(this.source)
     await $(`git checkout ${task.branch}`, { cwd: this.source })
     await $('git pull', { cwd: this.source })
     const commits = await gitlog(task.compare, this.source)

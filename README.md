@@ -51,7 +51,7 @@ $ kort serve <projectPath> # 默认projectPath为当前路径
 
 kort serve默认监听3010端口, 你可以使用--port选项指定其它端口
 ```bash
-$ kort serve --port 4000
+$ kort serve <projectPath> --port 4000
 ```
 
 接下来你可以将kort服务发布到外网, 并将此服务地址配置到远程仓库的部署钩子中, 就可以由远程仓库触发kort打包
@@ -59,7 +59,7 @@ $ kort serve --port 4000
 ### kort定时任务
 如果你不想在外网发布服务, 可以启用kort定时任务, kort每5min会同步一次远程仓库并打包仓库变更
 ```
-$ kort serve --cron
+$ kort serve <projectPath> --cron
 ```
 
 ### 发布打包产物
@@ -73,7 +73,8 @@ $ kort serve --cron
 $ npm i pm2 -g
 
 # 守护kort服务
-$ pm2 start kort -- serve
+$ pm2 start kort -- serve <projectPath>
+
 
 ```
 
