@@ -10,10 +10,7 @@ import markdown, {
   wrong,
   pair,
   success,
-  title,
-  br,
-  quote,
-  dot
+  quote
 } from '../wecom/markdown'
 
 const taskTitleMap = {
