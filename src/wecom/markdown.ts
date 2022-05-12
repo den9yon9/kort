@@ -29,8 +29,13 @@ export function warning(text: string) {
 }
 
 export function info(text: string) {
+  return color('blue', text)
+}
+
+export function success(text: string) {
   return color('info', text)
 }
+
 export function comment(text: string) {
   return color('comment', text)
 }
