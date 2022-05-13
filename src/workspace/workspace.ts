@@ -81,73 +81,88 @@ export default class Workspace {
   }
 
   async handleTask(task: Task) {
-    await $(`git checkout ${task.branch}`, { cwd: this.source })
-    await $('git pull', { cwd: this.source })
-    const commits = await gitlog(task.compare, this.source)
-    const projects = await this.getProjects(task.compare)
-
     try {
-      await notice(this.webhook, {
-        state: 'pending',
-        task: {
-          sender: task.sender,
-          repository: this.path.replace(`${this.storage}/`, ''),
-          branch: task.branch,
-          compare: task.compare
-        },
-        commits,
-        projects
-      })
+      await $(`git checkout ${task.branch}`, { cwd: this.source })
+      await $('git pull', { cwd: this.source })
+      const commits = await gitlog(task.compare, this.source)
+      const projects = await this.getProjects(task.compare)
 
-      await Promise.all(
-        projects.map(async (project) => {
-          try {
-            await buildProject(project.path)
-
-            const { stdout } = await $(`git status -s`, { cwd: this.source })
-            if (stdout) {
-              await $(`git reset HEAD --hard`, { cwd: this.source })
-              throw {
-                reason:
-                  '拒绝发布: 打包后发现源码有变更, 请检查你的npm build脚本是否合理',
-                stdout
-              }
-            }
-
-            await $(`git checkout ${task.branch}`, { cwd: this.dist })
-            const projectDist = join(project.path, 'dist')
-            const targetDist = project.path.replace(this.source, this.dist)
-            await mkdir(targetDist, { recursive: true })
-            await $(`git rm -rf --ignore-unmatch .`, { cwd: targetDist })
-            // 单仓多包时, git rm -rf . 会把targetDist目录本身也删掉, 所以这里要检测一下targetDist
-            await mkdir(targetDist, { recursive: true })
-            // FIXME: 替换mv为平台无关命令
-            await $(`mv ${projectDist}/* ${targetDist}/`)
-            project.state = 'fulfilled'
-          } catch (err) {
-            project.state = 'rejected'
-            project.reason = err
-          }
+      try {
+        await notice(this.webhook, {
+          state: 'pending',
+          task: {
+            sender: task.sender,
+            repository: this.path.replace(`${this.storage}/`, ''),
+            branch: task.branch,
+            compare: task.compare
+          },
+          commits,
+          projects
         })
-      )
 
-      await this.commitDist(task)
+        await Promise.all(
+          projects.map(async (project) => {
+            try {
+              await buildProject(project.path)
 
-      await $('git pull', {
-        cwd: join(this.releasePath, task.branch)
-      })
+              const { stdout } = await $(`git status -s`, { cwd: this.source })
+              if (stdout) {
+                await $(`git reset HEAD --hard`, { cwd: this.source })
+                throw {
+                  reason:
+                    '拒绝发布: 打包后发现源码有变更, 请检查你的npm build脚本是否合理',
+                  stdout
+                }
+              }
 
-      await notice(this.webhook, {
-        state: 'fulfilled',
-        task: {
-          sender: task.sender,
-          repository: this.path.replace(`${this.storage}/`, ''),
-          branch: task.branch,
-          compare: task.compare
-        },
-        commits,
-        projects
-      })
+              await $(`git checkout ${task.branch}`, { cwd: this.dist })
+              const projectDist = join(project.path, 'dist')
+              const targetDist = project.path.replace(this.source, this.dist)
+              await mkdir(targetDist, { recursive: true })
+              await $(`git rm -rf --ignore-unmatch .`, { cwd: targetDist })
+              // 单仓多包时, git rm -rf . 会把targetDist目录本身也删掉, 所以这里要检测一下targetDist
+              await mkdir(targetDist, { recursive: true })
+              // FIXME: 替换mv为平台无关命令
+              await $(`mv ${projectDist}/* ${targetDist}/`)
+              project.state = 'fulfilled'
+            } catch (err) {
+              project.state = 'rejected'
+              project.reason = err
+            }
+          })
+        )
+
+        await this.commitDist(task)
+
+        await $('git pull', {
+          cwd: join(this.releasePath, task.branch)
+        })
+
+        await notice(this.webhook, {
+          state: 'fulfilled',
+          task: {
+            sender: task.sender,
+            repository: this.path.replace(`${this.storage}/`, ''),
+            branch: task.branch,
+            compare: task.compare
+          },
+          commits,
+          projects
+        })
+      } catch (err) {
+        await notice(this.webhook, {
+          state: 'rejected',
+          error: err,
+          task: {
+            sender: task.sender,
+            repository: this.path.replace(`${this.storage}/`, ''),
+            branch: task.branch,
+            compare: task.compare
+          },
+          commits,
+          projects
+        })
+      }
     } catch (err) {
       await notice(this.webhook, {
         state: 'rejected',
@@ -157,9 +172,7 @@ export default class Workspace {
           repository: this.path.replace(`${this.storage}/`, ''),
           branch: task.branch,
           compare: task.compare
-        },
-        commits,
-        projects
+        }
       })
     }
   }

@@ -11,8 +11,8 @@ export type TaskState = {
     branch: string
     compare: string
   }
-  commits: string[]
-  projects: Project[]
+  commits?: string[]
+  projects?: Project[]
 }
 
 const instance = axios.create()

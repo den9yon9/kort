@@ -44,7 +44,7 @@ export function error(text: string) {
   return color('red', text)
 }
 
-export function list(list: string[]) {
+export function list(list: Array<string | undefined>) {
   return `${list.filter(Boolean).join('\n')}`
 }
 

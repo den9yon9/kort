@@ -27,28 +27,20 @@ const projectMarkdown = ({ name, reason, state }: Project) =>
   }[state]())
 
 export default function wecom(url, data: TaskState) {
+  const { projects, commits, task, state, error } = data
   return markdown(
     url,
     list([
-      bold(taskTitleMap[data.state]),
-      data.error ? pair(data.error) : '',
-      pair(data.task),
-      bold(comment('提交记录')),
-      quote(list(data.commits.map((item) => star(comment(item))))),
-      bold(
-        comment(
-          {
-            pending: '变更项目',
-            fulfilled: '打包结果',
-            rejected: '打包结果'
-          }[data.state]
-        )
-      ),
-      {
-        pending: quote(list(data.projects.map(projectMarkdown))),
-        fulfilled: list(data.projects.map(projectMarkdown)),
-        rejected: list(data.projects.map(projectMarkdown))
-      }[data.state]
+      bold(taskTitleMap[state]),
+      error && pair(error),
+      pair(task),
+      commits && bold(comment('提交记录')),
+      commits && quote(list(commits.map((item) => star(comment(item))))),
+      projects && bold(comment(state === 'pending' ? '变更项目' : '打包结果')),
+      projects &&
+        (state === 'pending'
+          ? quote(list(projects.map(projectMarkdown)))
+          : list(projects.map(projectMarkdown)))
     ])
   )
     .then((response) => {
