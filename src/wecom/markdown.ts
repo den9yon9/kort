@@ -1,5 +1,6 @@
 import axios from 'axios'
 import safeStringify from 'fast-safe-stringify'
+import { log } from '../utils'
 import sizeOf from './sizeOf'
 
 export const br = '\n'
@@ -100,7 +101,7 @@ export default async function markdown(url: string, content: string) {
   const contentShorted =
     sizeOf(content) >= 4096 ? `${content.substring(0, 3800)}...` : content
 
-  if (sizeOf(content) >= 4096) console.log(content)
+  if (sizeOf(content) >= 4096) log(content)
 
   return axios.post(url, {
     msgtype: 'markdown',

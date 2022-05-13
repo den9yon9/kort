@@ -1,5 +1,5 @@
 import { join, resolve } from 'path'
-import { isRepositoryHasRemote, parseOrigin } from '../utils'
+import { isRepositoryHasRemote, log, parseOrigin } from '../utils'
 import notice from '../webhook'
 import { Project, Task } from '../types'
 import { $, gitlog } from '../utils'
@@ -185,6 +185,6 @@ export default class Workspace {
       await $(`git commit -m 'sender: ${task.sender}'`, { cwd: this.dist })
       if (await isRepositoryHasRemote(this.dist))
         await $(`git push`, { cwd: this.dist })
-    } else console.log('dist无更新: 你的任务可能无需打包')
+    } else log('dist无更新: 你的任务可能无需打包')
   }
 }

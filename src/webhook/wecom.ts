@@ -1,4 +1,5 @@
 import { Project } from 'src/types'
+import { log } from '../utils'
 import { TaskState } from '../webhook'
 import markdown, {
   bold,
@@ -45,9 +46,9 @@ export default function wecom(url, data: TaskState) {
   )
     .then((response) => {
       if (response.data.errcode === 0) return
-      console.log(`企业微信通知错误: ${JSON.stringify(response.data)}: `, data)
+      log(`企业微信通知错误: ${JSON.stringify(response.data)}: `, data)
     })
     .catch((err) => {
-      console.log(`企业微信通知失败: ${err.message}}: `, data)
+      log(`企业微信通知失败: ${err.message}}: `, data)
     })
 }

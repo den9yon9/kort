@@ -41,3 +41,7 @@ export function isFileExist(path: PathLike) {
     .then(() => Promise.resolve(true))
     .catch(() => Promise.resolve(false))
 }
+
+export function log(...args: any[]) {
+  console.log(new Date(), ...args)
+}
