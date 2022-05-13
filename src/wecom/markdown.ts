@@ -81,17 +81,15 @@ export function stringify(data: any) {
   )
 }
 
-export function pair(obj: object) {
-  return quote(
-    list(
-      Object.entries(obj).map(
-        ([key, value]) =>
-          `${comment(stringify(key))}: ${
-            value instanceof Array
-              ? `${br}${list(value.map(stringify))}`
-              : stringify(value)
-          } `
-      )
+export function pair(obj: object, prefix: string = '') {
+  return list(
+    Object.entries(obj).map(
+      ([key, value]) =>
+        `${prefix}${comment(stringify(key))}: ${
+          value instanceof Array
+            ? `${br}${list(value.map(stringify))}`
+            : stringify(value)
+        } `
     )
   )
 }

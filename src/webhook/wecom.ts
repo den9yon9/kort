@@ -33,8 +33,9 @@ export default function wecom(url, data: TaskState) {
     url,
     list([
       bold(taskTitleMap[state]),
-      error && pair(error),
-      pair(task),
+      quote(pair(task)),
+      error && bold(comment('错误详情')),
+      error && quote(pair(error)),
       commits && bold(comment('提交记录')),
       commits && quote(list(commits.map((item) => star(comment(item))))),
       projects && bold(comment(state === 'pending' ? '变更项目' : '打包结果')),
