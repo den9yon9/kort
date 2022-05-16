@@ -5,7 +5,7 @@ import type Workspace from '../workspace/workspace'
 
 export default class Dispatcher {
   workspaces: Workspace[]
-  private currentTask: Task | null = null
+  private currentTask: Task | undefined
   private queue: Task[] = []
 
   constructor(workspaces: Workspace[]) {
@@ -38,14 +38,13 @@ export default class Dispatcher {
       compare,
       sender
     })
-    if (this.currentTask === null) this.dispatch()
+    if (!this.currentTask) this.dispatch()
     return '任务已存入队列'
   }
 
   private dispatch() {
-    const task = this.queue.pop()
-    if (task) this.handle(task)
-    else this.currentTask = null
+    this.currentTask = this.queue.pop()
+    if (this.currentTask) this.handle(this.currentTask)
   }
 
   private async handle(task: Task) {
