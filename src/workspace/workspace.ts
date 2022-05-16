@@ -115,7 +115,7 @@ export default class Workspace {
         await $(`git checkout ${task.branch}`, { cwd: this.dist })
 
         // 多项目提交有git操作, 需要串行执行, 避免单仓多git进程冲突
-        for (let i; i < projects.length; i++) {
+        for (let i = 0; i < projects.length; i++) {
           const project = projects[i]
           try {
             await this.checkSource()
