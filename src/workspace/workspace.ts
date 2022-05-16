@@ -100,37 +100,39 @@ export default class Workspace {
           projects
         })
 
+        // 多项目打包不存在git操作, 可以并行执行
         await Promise.all(
           projects.map(async (project) => {
             try {
               await buildProject(project.path)
-
-              const { stdout } = await $(`git status -s`, { cwd: this.source })
-              if (stdout) {
-                await $(`git reset HEAD --hard`, { cwd: this.source })
-                throw {
-                  reason:
-                    '拒绝发布: 打包后发现源码有变更, 请检查你的npm build脚本是否合理',
-                  stdout
-                }
-              }
-
-              await $(`git checkout ${task.branch}`, { cwd: this.dist })
-              const projectDist = join(project.path, 'dist')
-              const targetDist = project.path.replace(this.source, this.dist)
-              await mkdir(targetDist, { recursive: true })
-              await $(`git rm -rf --ignore-unmatch .`, { cwd: targetDist })
-              // 单仓多包时, git rm -rf . 会把targetDist目录本身也删掉, 所以这里要检测一下targetDist
-              await mkdir(targetDist, { recursive: true })
-              // FIXME: 替换mv为平台无关命令
-              await $(`mv ${projectDist}/* ${targetDist}/`)
-              project.state = 'fulfilled'
             } catch (err) {
               project.state = 'rejected'
               project.reason = err
             }
           })
         )
+
+        await $(`git checkout ${task.branch}`, { cwd: this.dist })
+
+        // 多项目提交有git操作, 需要串行执行, 避免单仓多git进程冲突
+        for (let i; i < projects.length; i++) {
+          const project = projects[i]
+          try {
+            await this.checkSource()
+            const projectDist = join(project.path, 'dist')
+            const targetDist = project.path.replace(this.source, this.dist)
+            await mkdir(targetDist, { recursive: true })
+            await $(`git rm -rf --ignore-unmatch .`, { cwd: targetDist })
+            // 单仓多包时, git rm -rf . 会把targetDist目录本身也删掉, 所以这里要检测一下targetDist
+            await mkdir(targetDist, { recursive: true })
+            // FIXME: 替换mv为平台无关命令
+            await $(`mv ${projectDist}/* ${targetDist}/`)
+            project.state = 'fulfilled'
+          } catch (err) {
+            project.state = 'rejected'
+            project.reason = err
+          }
+        }
 
         await this.commitDist(task)
 
@@ -186,5 +188,17 @@ export default class Workspace {
       if (await isRepositoryHasRemote(this.dist))
         await $(`git push`, { cwd: this.dist })
     } else log('dist无更新: 你的任务可能无需打包')
+  }
+
+  private async checkSource() {
+    const { stdout } = await $(`git status -s`, { cwd: this.source })
+    if (stdout) {
+      await $(`git reset HEAD --hard`, { cwd: this.source })
+      throw {
+        reason: '源码仓库工作区有变更',
+        desc: 'CI服务器上源码仓库的工作区应该是"clean"的, CI才能干净地切换分支和保证打包结果的一致性, 请检查你的build脚本是否合理',
+        stdout
+      }
+    }
   }
 }
