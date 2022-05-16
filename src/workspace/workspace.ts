@@ -117,6 +117,8 @@ export default class Workspace {
         // 多项目提交有git操作, 需要串行执行, 避免单仓多git进程冲突
         for (let i = 0; i < projects.length; i++) {
           const project = projects[i]
+          // 只操作打包成功的项目
+          if (project.state === 'rejected') continue
           try {
             await this.checkSource()
             const projectDist = join(project.path, 'dist')
