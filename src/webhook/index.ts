@@ -1,17 +1,12 @@
 import axios from 'axios'
-import { Project } from 'src/types'
+import { Project, Task } from 'src/types'
 import { log } from '../utils'
 import wecom from './wecom'
 
 export type TaskState = {
   state: 'pending' | 'fulfilled' | 'rejected'
   error?: object
-  task: {
-    sender: string
-    repository: string
-    branch: string
-    compare: string
-  }
+  task: Task
   commits?: string[]
   projects?: Project[]
 }

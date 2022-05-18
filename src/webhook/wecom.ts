@@ -23,7 +23,7 @@ const taskTitleMap = {
 
 const projectMarkdown = ({ name, reason, state }: Project) =>
   ({
-    pending: () => dot(comment(name)),
+    pending: () => star(comment(name)),
     fulfilled: () => correct(comment(name)),
     rejected: () => list([wrong(comment(name)), quote(pair(reason as any))])
   }[state]())

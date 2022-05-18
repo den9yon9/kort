@@ -90,12 +90,7 @@ export default class Workspace {
       try {
         await notice(this.webhook, {
           state: 'pending',
-          task: {
-            sender: task.sender,
-            repository: this.path.replace(`${this.storage}/`, ''),
-            branch: task.branch,
-            compare: task.compare
-          },
+          task,
           commits,
           projects
         })
@@ -144,12 +139,7 @@ export default class Workspace {
 
         await notice(this.webhook, {
           state: 'fulfilled',
-          task: {
-            sender: task.sender,
-            repository: this.path.replace(`${this.storage}/`, ''),
-            branch: task.branch,
-            compare: task.compare
-          },
+          task,
           commits,
           projects
         })
@@ -157,12 +147,7 @@ export default class Workspace {
         await notice(this.webhook, {
           state: 'rejected',
           error: err,
-          task: {
-            sender: task.sender,
-            repository: this.path.replace(`${this.storage}/`, ''),
-            branch: task.branch,
-            compare: task.compare
-          },
+          task,
           commits,
           projects
         })
@@ -171,12 +156,7 @@ export default class Workspace {
       await notice(this.webhook, {
         state: 'rejected',
         error: err,
-        task: {
-          sender: task.sender,
-          repository: this.path.replace(`${this.storage}/`, ''),
-          branch: task.branch,
-          compare: task.compare
-        }
+        task
       })
     }
   }
