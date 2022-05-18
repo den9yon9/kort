@@ -3,13 +3,11 @@ import { $, getSHA1 } from '../utils'
 import Dispatcher from '../dispatch'
 
 export default class Schedule {
-  private cron: CronJob
-  private dispatcher: Dispatcher
   constructor(time: string, dispatcher: Dispatcher) {
-    this.dispatcher = dispatcher
-    this.cron = new CronJob(
+    new CronJob(
       time,
       () => {
+        if (dispatcher.currentTask) return
         dispatcher.workspaces.forEach(async (workspace) => {
           await $('git fetch', { cwd: workspace.source })
           workspace.branches.forEach(async (branch) => {

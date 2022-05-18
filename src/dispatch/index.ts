@@ -5,7 +5,7 @@ import type Workspace from '../workspace/workspace'
 
 export default class Dispatcher {
   workspaces: Workspace[]
-  private currentTask: Task | undefined
+  currentTask: Task | undefined
   private queue: Task[] = []
 
   constructor(workspaces: Workspace[]) {
