@@ -54,15 +54,15 @@ export function star(text: string) {
 }
 
 export function dot(text: string) {
-  return `${warning('●')} ${text}`
+  return `${warning('•')} ${text}`
 }
 
 export function correct(text: string) {
-  return `${color('green', `${bold('✓')} `)} ${text}`
+  return `${color('green', `${bold('✓')}`)} ${text}`
 }
 
 export function wrong(text: string) {
-  return `${color('red', `${bold('✗')} `)} ${text}`
+  return `${color('red', `${bold('✗')}`)} ${text}`
 }
 
 export function escape(text: string) {

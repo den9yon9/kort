@@ -11,7 +11,8 @@ import markdown, {
   wrong,
   pair,
   success,
-  quote
+  quote,
+  dot
 } from '../wecom/markdown'
 
 const taskTitleMap = {
@@ -22,7 +23,7 @@ const taskTitleMap = {
 
 const projectMarkdown = ({ name, reason, state }: Project) =>
   ({
-    pending: () => star(comment(name)),
+    pending: () => dot(comment(name)),
     fulfilled: () => correct(comment(name)),
     rejected: () => list([wrong(comment(name)), quote(pair(reason as any))])
   }[state]())
