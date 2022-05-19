@@ -173,13 +173,13 @@ export default class Workspace {
   }
 
   private async checkSource() {
-    const { stdout } = await $(`git status -s`, { cwd: this.source })
-    if (stdout) {
+    const result = await $(`git status -s`, { cwd: this.source })
+    if (result.stdout) {
       await $(`git reset HEAD --hard`, { cwd: this.source })
       throw {
         reason: '源码仓库工作区有变更',
         desc: 'CI服务器上源码仓库的工作区应该是"clean"的, CI才能干净地切换分支和保证打包结果的一致性, 请检查你的build脚本是否合理',
-        stdout
+        ...result
       }
     }
   }
