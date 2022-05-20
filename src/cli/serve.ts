@@ -7,17 +7,19 @@ import Workspace from 'src/workspace/workspace'
 export default async function serve(
   port: number,
   workspaces: Workspace[],
-  cron: string
+  cron: string | boolean
 ) {
   // TODO: check workspaces
   const dispatcher = new Dispatcher(workspaces)
-  const schedule = new Schedule(cron, dispatcher)
-  dispatcher.schedule = schedule
-
   app.context.dispatcher = dispatcher
-  app.context.schedule = schedule
-  app.listen(port)
+  if (cron) {
+    const pattern = cron === true ? '0 */5 * * * *' : cron
+    const schedule = new Schedule(pattern, dispatcher)
+    dispatcher.schedule = schedule
+    app.context.schedule = schedule
+    console.log(`定时任务已启动: ${green(pattern)}\n`)
+  }
 
+  app.listen(port)
   console.log(`\n服务已启动port: ${green(port)}`)
-  console.log(`定时任务已启动: ${green(cron)}\n`)
 }

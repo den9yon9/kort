@@ -27,36 +27,32 @@ $ npm install -g yarn pnpm kort --registry=https://dev-page.iambanban.com/regist
     "webhook": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=bc7871a1-7459-4c7c-8e1e-35108f7583fc",
     // kort默认打包master分支, 如果你要打包其它分支可以这样配置
     "branches": ["test", "dev"]
-  }
+  },
+  ...
 ]
 ```
 
 
 ### 安装kort项目依赖
 
-执行 kort install 命令, kort将会根据kort.json中的配置去clone源码仓库, 准备打包环境
+配置或更新kort.json后, 在kort项目内执行 kort install 命令, kort将会克隆kort.json中配置的仓库, 准备好打包环境
 
 ```bash
-$ kort install  # 默认当前路径
+$ kort install
 ```
-
-> tips: 更新kort.json后, 也需要执行kort install使配置生效
-
 
 ### 运行kort服务
 
-安装好kort项目依赖后, 就可以开启kort服务了
+然后就可以开启kort服务了
 ```bash
 
-$ kort serve # 默认当前路径
+$ kort serve --cron # --cron选项指示kort以定时任务模式运行, 此模式下kort每5min同步一次origin并打包仓库变更
 ```
 
 kort serve默认监听3010端口, 你可以使用--port选项指定其它端口
 ```bash
-$ kort serve --port 4000
+$ kort serve --port 4000 --cron
 ```
-
-kort服务开启后,每5min会同步一次远程仓库并打包仓库变更
 
 > 如果你想由远程仓库的部署钩子触发打包, 以获得更及时的打包体验, 可以将kort服务发布到外网, 将服务地址配置到远程仓库的部署钩子中即可
 
@@ -68,7 +64,7 @@ kort服务开启后,每5min会同步一次远程仓库并打包仓库变更
 $ npm i pm2 -g
 
 # 守护kort服务
-$ pm2 start kort -- serve ./my-project
+$ pm2 start kort -- serve ./my-project --cron
 ```
 
 ### 发布打包产物
