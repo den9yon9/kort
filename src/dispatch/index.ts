@@ -1,10 +1,12 @@
 import { basename } from 'path'
+import Schedule from 'src/schedule'
 import { Task } from '../types'
 import { parseOrigin, shortSelector } from '../utils'
 import type Workspace from '../workspace/workspace'
 
 export default class Dispatcher {
   workspaces: Workspace[]
+  schedule?: Schedule
   currentTask: Task | undefined
   private queue: Task[] = []
 
@@ -38,11 +40,11 @@ export default class Dispatcher {
       compare,
       sender
     })
-    if (!this.currentTask) this.dispatch()
+    if (!this.currentTask && !this.schedule?.isBusy) this.dispatch()
     return '任务已存入队列'
   }
 
-  private dispatch() {
+  dispatch() {
     this.currentTask = this.queue.pop()
     if (this.currentTask) this.handle(this.currentTask)
   }

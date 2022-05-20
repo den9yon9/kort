@@ -11,11 +11,13 @@ export default async function serve(
 ) {
   // TODO: check workspaces
   const dispatcher = new Dispatcher(workspaces)
+  const schedule = new Schedule(cron, dispatcher)
+  dispatcher.schedule = schedule
 
   app.context.dispatcher = dispatcher
+  app.context.schedule = schedule
   app.listen(port)
+
   console.log(`\n服务已启动port: ${green(port)}`)
-  if (!cron) return
-  new Schedule(cron, dispatcher)
   console.log(`定时任务已启动: ${green(cron)}\n`)
 }

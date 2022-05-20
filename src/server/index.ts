@@ -1,9 +1,13 @@
 import Koa from 'koa'
 import * as koaBody from 'koa-body'
+import Schedule from 'src/schedule'
 import type Dispatcher from '../dispatch'
 import { getInitialCommit, getSHA1 } from '../utils'
 
-const app = new Koa<Koa.DefaultState, { dispatcher: Dispatcher }>()
+const app = new Koa<
+  Koa.DefaultState,
+  { dispatcher: Dispatcher; schedule: Schedule }
+>()
 
 app.use(koaBody())
 
