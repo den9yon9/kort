@@ -45,16 +45,14 @@ $ kort install
 
 然后就可以开启kort服务了
 ```bash
-
-$ kort serve --cron # --cron选项指示kort以定时任务模式运行, 此模式下kort每5min同步一次origin并打包仓库变更
+# --cron选项指示kort以定时任务模式运行, 此模式下kort每5min同步一次origin并打包仓库变更
+$ kort serve --cron 
 ```
 
-kort serve默认监听3010端口, 你可以使用--port选项指定其它端口
-```bash
-$ kort serve --port 4000 --cron
-```
+> kort serve默认监听3010端口, 你可以使用--port选项指定其它端口
 
-> 如果你想由远程仓库的部署钩子触发打包, 以获得更及时的打包体验, 可以将kort服务发布到外网, 将服务地址配置到远程仓库的部署钩子中即可
+
+> tips: 如果你想由远程仓库的部署钩子触发打包, 以获得更及时的打包体验, 将kort服务地址配置到远程仓库的部署钩子中即可(暂时仅支持gogs和github)
 
 ### 守护kort进程
 使用你熟悉的方式守护kort进程, 这里以node进程管理模块pm2为例
