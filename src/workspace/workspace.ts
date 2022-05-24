@@ -95,17 +95,15 @@ export default class Workspace {
           projects
         })
 
-        // 多项目打包不存在git操作, 可以并行执行
-        await Promise.all(
-          projects.map(async (project) => {
-            try {
-              await buildProject(project.path)
-            } catch (err) {
-              project.state = 'rejected'
-              project.reason = err
-            }
-          })
-        )
+        for (let i = 0; i < projects.length; i++) {
+          const project = projects[i]
+          try {
+            await buildProject(project.path)
+          } catch (err) {
+            project.state = 'rejected'
+            project.reason = err
+          }
+        }
 
         await $(`git checkout ${task.branch}`, { cwd: this.dist })
 
