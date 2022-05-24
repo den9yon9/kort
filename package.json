@@ -1,6 +1,6 @@
 {
   "name": "kort",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "",
   "scripts": {
     "build": "rm -rf dist && tsc",
