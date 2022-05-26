@@ -19,6 +19,8 @@ instance.interceptors.response.use(undefined, (error) => {
 })
 
 export default function notice(url: string | undefined, data: TaskState) {
+  // FIXME: TaskState.task.origin中的密钥需要处理一下, 不要通知出去了
+
   // 未配置webhook, 就将通知打印在日志里
   if (!url) return log(data)
   // 企业微信格式

@@ -153,7 +153,7 @@ export default class Workspace {
     } catch (err) {
       await notice(this.webhook, {
         state: 'rejected',
-        error: err,
+        error: { ...err, message: err.message },
         task
       })
     }
