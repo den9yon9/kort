@@ -1,4 +1,5 @@
 import axios from 'axios'
+import path, { join } from 'path'
 import { Project, Task } from 'src/types'
 import { log } from '../utils'
 import wecom from './wecom'
@@ -18,8 +19,9 @@ instance.interceptors.response.use(undefined, (error) => {
   return Promise.reject(error)
 })
 
-export default function notice(url: string | undefined, data: TaskState) {
-  // FIXME: TaskState.task.origin中的密钥需要处理一下, 不要通知出去了
+export default function notice(url: string | undefined, taskState: TaskState) {
+  const data = JSON.parse(JSON.stringify(taskState))
+  data.task.origin = wipeHttpToken(data.task.origin)
 
   // 未配置webhook, 就将通知打印在日志里
   if (!url) return log(data)
@@ -29,4 +31,11 @@ export default function notice(url: string | undefined, data: TaskState) {
   return axios.post(url, data).catch((err) => {
     log(`${url}通知失敗: ${JSON.stringify(err)}`)
   })
+}
+
+// 隐藏url中的token, 不要通知出去了
+function wipeHttpToken(url: string) {
+  if (!url.startsWith('http')) return url
+  const { origin, pathname } = new URL(url)
+  return origin + pathname
 }

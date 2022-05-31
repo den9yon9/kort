@@ -1,14 +1,10 @@
 import { $ } from '.'
 
 export const gitlog = async (selector: string, cwd: string) => {
-  const { stdout } = await $(`git log ${selector} --pretty=format:'"%s",'`, {
+  const { stdout } = await $(`git log ${selector} --pretty=format:'%s'`, {
     cwd
   })
-  // FIXME: 双引号转义, 不然JSON.parse会报错
-  console.log(stdout)
-  const commits = JSON.parse(
-    `[${stdout.substring(0, stdout.length - 1)}]`
-  ) as Array<string>
+  const commits = stdout.split('\n')
   return commits.length > 20 ? [...commits.slice(0, 20), '...'] : commits
 }
 
