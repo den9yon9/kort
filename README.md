@@ -35,22 +35,21 @@ $ npm install -g yarn pnpm kort --registry=https://dev-page.iambanban.com/regist
 
 ### 安装kort项目依赖
 
-配置或更新kort.json后, 在kort项目内执行 kort install 命令, kort将会克隆kort.json中配置的仓库, 准备好打包环境
+配置或更新kort.json后, 在kort项目内执行 kort install 命令, kort将会根据kort.json中的配置, 准备好打包环境
 
 ```bash
 $ kort install
 ```
 
 ### 运行kort服务
+现在可以运行kort服务了: 
 
-然后就可以开启kort服务了
 ```bash
-# --cron选项指示kort以定时任务模式运行, 此模式下kort每5min同步一次origin并打包仓库变更
 $ kort serve --cron 
 ```
 
-> kort serve默认监听3010端口, 你可以使用--port选项指定其它端口
-
+--cron选项指示kort以定时任务模式运行, 此模式下kort每5min同步一次origin并打包仓库变更;
+kort serve默认监听3010端口, 你可以使用--port选项指定其它端口;
 
 > tips: 如果你想由远程仓库的部署钩子触发打包, 以获得更及时的打包体验, 将kort服务地址配置到远程仓库的部署钩子中即可(暂时仅支持gogs和github)
 
@@ -93,3 +92,6 @@ server {
     }
 }
 ```
+
+### 认证文件
+如果你需要在dist目录中放置一些认证文件, 直接将认证文件存放在相应的dist根目录下, 然后 commit & push 即可
