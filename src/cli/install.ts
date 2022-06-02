@@ -84,16 +84,28 @@ export default async function install(workspaces: Workspace[]) {
       workspace.branches.map(async (branch) => {
         if (!(await isBranchExist(workspace.dist, branch))) {
           // 切到第一次提交后再切新的分支出来,保障每一个dist分支是干净的
-          await $(`git checkout ${await getInitialCommit(workspace.dist)}`, {
-            cwd: workspace.dist
-          })
-          await $(`git clean -fd`, { cwd: workspace.dist })
-          await $(`git checkout -b ${branch}`, { cwd: workspace.dist })
+          await dist$(`git checkout ${await getInitialCommit(workspace.dist)}`)
+          await dist$(`git clean -fd`)
+          await dist$(`git checkout -b ${branch}`)
           log(`提交分支${branch}已创建`)
         } else {
         }
       })
     )
+
+    // 复制源码仓库中的认证文件到dist仓库各分支中
+    // for (let branch of workspace.branches) {
+    //   await dist$(`git checkout ${branch}`)
+    //   await source$(`git pull`)
+    //   if (!(await isFileExist(join(workspace.source, '_auth')))) continue
+    //   await dist$(`cp -rfa ${workspace.source}/_auth/* .`)
+    //   await cpy(join(workspace.source, '_auth/*'), join(workspace.dist))
+    //   const { stdout } = await dist$(`git status -s`)
+    //   if (!stdout) continue
+    //   await dist$(`git add .`)
+    //   await dist$('git commit -am "配置认证文件"')
+    //   log(`${branch}认证文件已配置`)
+    // }
 
     // 准备发布仓库
     if (!(await isFileExist(workspace.releasePath))) {
@@ -114,6 +126,9 @@ export default async function install(workspaces: Workspace[]) {
           await $(`git checkout ${branch}`, {
             cwd: join(workspace.releasePath, branch)
           })
+          await dist$(`git config --local credential.helper store`)
+          await dist$('git config --local user.name kort')
+          await dist$('git config --local user.email kort@fake.local')
           log(`发布分支${branch}设置完成`)
         }
       })
@@ -124,7 +139,7 @@ export default async function install(workspaces: Workspace[]) {
 
   console.log(
     yellow(
-      `\n下一步: 运行kort serve启动kort服务 (如果kort服务已启动, 请重启服务以使配置生效)\n`
+      `\n下一步: 运行kort serve启动kort服务 (如果kort服务已启动, 请重启服务使配置生效)\n`
     )
   )
 }

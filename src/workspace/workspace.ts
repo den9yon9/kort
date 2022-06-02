@@ -99,6 +99,7 @@ export default class Workspace {
           const project = projects[i]
           try {
             await buildProject(project.path)
+            await this.checkSource()
           } catch (err) {
             project.state = 'rejected'
             project.reason = err
@@ -113,7 +114,6 @@ export default class Workspace {
           // 只操作打包成功的项目
           if (project.state === 'rejected') continue
           try {
-            await this.checkSource()
             const projectDist = join(project.path, 'dist')
             const targetDist = project.path.replace(this.source, this.dist)
             await mkdir(targetDist, { recursive: true })
