@@ -12,7 +12,7 @@ const app = new Koa<
 app.use(koaBody())
 
 app.use(async (ctx) => {
-  const { method, path, body, query } = ctx.request
+  const { method, path, body } = ctx.request
   ctx.body = await {
     'GET /'() {
       return 'hello world!'
@@ -21,7 +21,7 @@ app.use(async (ctx) => {
       return ctx.dispatcher.register(body)
     },
     async 'POST /build'() {
-      let { origin, branch, compare } = body
+      let { origin, branch, selector, compare } = body
       const workspace = ctx.dispatcher.findWorkspace(origin)
       if (!workspace) return `${origin}未配置`
       if (!workspace.branches.includes(branch)) return `${branch}未配置`
@@ -35,7 +35,8 @@ app.use(async (ctx) => {
         ref: branch,
         compare_url: compare,
         repository: { html_url: workspace.origin },
-        sender: { login: 'manual' }
+        sender: { login: 'manual' },
+        selector,
       })
     }
   }[`${method} ${path}`]?.()

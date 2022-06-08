@@ -6,7 +6,7 @@ import install from './install'
 import serve from './serve'
 import build from './build'
 
-const { origin, branch, compare, cron, port = 3010, _ } = argv
+const { origin, branch, compare, selector = './\*', cron, port = 3010, _ } = argv
 
 function help() {
   console.log(`Version ${require('../../package.json').version}`)
@@ -31,7 +31,7 @@ if (['kort', 'help', 'version', 'build'].includes(cmd)) {
     help,
     kort: help,
     version,
-    build: () => build(port, origin, branch, compare)
+    build: () => build(port, origin, branch, compare, selector)
   }[cmd]?.())
 } else {
   configuration(_[0] || '.').then((workspaces) => {

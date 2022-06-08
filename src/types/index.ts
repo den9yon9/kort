@@ -1,7 +1,7 @@
 export interface Task {
   origin: string
   branch: string
-  compare: string
+  selector: string
   sender: string
 }
 

@@ -25,19 +25,21 @@ export default class Dispatcher {
     ref: string
     compare_url: string
     repository: { html_url: string }
-    sender: { login: string }
+    sender: { login: string },
+    selector?: string
   }) {
     const origin = data.repository.html_url
     const branch = basename(data.ref)
     const compare = shortSelector(basename(data.compare_url))
     const sender = data.sender.login
+    const selector = data.selector || `[${compare}]`
     const workspace = this.findWorkspace(origin)
     if (!workspace) return `未找到${origin}相关配置`
     if (!workspace.branches.includes(branch)) return `未找到${origin}相关配置`
     this.queue.push({
       origin,
       branch,
-      compare,
+      selector,
       sender
     })
     if (!this.currentTask && !this.schedule?.isBusy) this.dispatch()

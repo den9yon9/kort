@@ -64,9 +64,9 @@ export default class Workspace {
     return join(this.path, 'dist')
   }
 
-  private async getProjects(compare: string) {
+  private async getProjects(selector: string) {
     const { stdout } = await $(
-      `pnpm ls --depth -1 --json --filter [${compare}]`,
+      `pnpm ls --depth -1 --json --filter ${selector}`,
       { cwd: this.source }
     )
     const projects = JSON.parse(`[${stdout.replace(/]\n\[/g, '],[')}]`)
@@ -84,8 +84,10 @@ export default class Workspace {
     try {
       await $(`git checkout ${task.branch}`, { cwd: this.source })
       await $('git pull', { cwd: this.source })
-      const commits = await gitlog(task.compare, this.source)
-      const projects = await this.getProjects(task.compare)
+      let commits: string[] | undefined
+      if (/\[*\]/.test(task.selector))
+        commits = await gitlog(task.selector.substring(1, task.selector.length-1), this.source)
+      const projects = await this.getProjects(task.selector)
 
       try {
         await notice(this.webhook, {
