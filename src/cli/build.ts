@@ -4,14 +4,12 @@ export default async function build(
   port: number,
   origin: string,
   branch: string,
-  compare?: string,
-  selector?: string
+  selector: string
 ) {
   try {
     const response = await axios.post(`http://localhost:${port}/build`, {
       origin,
       branch,
-      compare,
       selector
     })
     if (response) console.log(response.data)

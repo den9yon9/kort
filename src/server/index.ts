@@ -1,8 +1,9 @@
 import Koa from 'koa'
 import * as koaBody from 'koa-body'
+import { basename } from 'path'
 import Schedule from 'src/schedule'
 import type Dispatcher from '../dispatch'
-import { getInitialCommit, getSHA1 } from '../utils'
+import { shortSelector } from '../utils'
 
 const app = new Koa<
   Koa.DefaultState,
@@ -18,26 +19,21 @@ app.use(async (ctx) => {
       return 'hello world!'
     },
     'POST /'() {
-      return ctx.dispatcher.register(body)
+      const data = body as {
+        ref: string
+        compare_url: string
+        repository: { html_url: string }
+        sender: { login: string }
+      }
+
+      const origin = data.repository.html_url
+      const branch = basename(data.ref)
+      const selector = `[${shortSelector(basename(data.compare_url))}]`
+      const sender = data.sender.login
+      return ctx.dispatcher.register({ origin, branch, selector, sender })
     },
     async 'POST /build'() {
-      let { origin, branch, selector, compare } = body
-      const workspace = ctx.dispatcher.findWorkspace(origin)
-      if (!workspace) return `${origin}未配置`
-      if (!workspace.branches.includes(branch)) return `${branch}未配置`
-      if (!compare) {
-        const head = await getSHA1(branch, workspace.source)
-        const base = await getInitialCommit(workspace.source)
-        if (base === head) return
-        compare = `${base}...${head}`
-      }
-      return ctx.dispatcher.register({
-        ref: branch,
-        compare_url: compare,
-        repository: { html_url: workspace.origin },
-        sender: { login: 'manual' },
-        selector,
-      })
+      return ctx.dispatcher.register({ ...body, sender: 'manual' })
     }
   }[`${method} ${path}`]?.()
 })

@@ -18,10 +18,10 @@ export default class Schedule {
               const head = await getSHA1(`origin/${branch}`, workspace.source)
               if (base === head) return
               dispatcher.register({
-                ref: branch,
-                compare_url: `${base}...${head}`,
-                repository: { html_url: workspace.origin },
-                sender: { login: 'cron' }
+                origin: workspace.origin,
+                branch,
+                sender: 'cron',
+                selector: `[${base}...${head}]`
               })
             })
           })
