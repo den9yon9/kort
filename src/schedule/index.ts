@@ -1,5 +1,5 @@
 import { CronJob } from 'cron'
-import { $, getSHA1 } from '../utils'
+import { $, getSHA1, shortSelector } from '../utils'
 import Dispatcher from '../dispatch'
 
 export default class Schedule {
@@ -17,11 +17,12 @@ export default class Schedule {
               const base = await getSHA1(branch, workspace.source)
               const head = await getSHA1(`origin/${branch}`, workspace.source)
               if (base === head) return
+              const compare = `${base}...${head}`
               dispatcher.register({
                 origin: workspace.origin,
                 branch,
                 sender: 'cron',
-                selector: `[${base}...${head}]`
+                selector: `[${shortSelector(compare)}]`
               })
             })
           })
