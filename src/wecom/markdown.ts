@@ -99,7 +99,7 @@ export default async function markdown(url: string, content: string) {
   const contentShorted =
     sizeOf(content) >= 4096 ? `${content.substring(0, 3800)}...` : content
 
-  if (sizeOf(content) >= 4096) log(content)
+  if (sizeOf(content) >= 4096) log('通知过长,企业微信展示不全, 以下为完整通知:\n',content)
 
   return axios.post(url, {
     msgtype: 'markdown',

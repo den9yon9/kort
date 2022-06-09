@@ -43,5 +43,8 @@ export function isFileExist(path: PathLike) {
 }
 
 export function log(...args: any[]) {
-  console.log(new Date(), ...args)
+  console.log('\n\n\n')
+  console.log(new Date())
+  console.log(...args)
+  console.log('\n\n\n')
 }

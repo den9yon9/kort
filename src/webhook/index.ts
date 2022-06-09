@@ -1,5 +1,4 @@
 import axios from 'axios'
-import path, { join } from 'path'
 import { Project, Task } from 'src/types'
 import { log } from '../utils'
 import wecom from './wecom'

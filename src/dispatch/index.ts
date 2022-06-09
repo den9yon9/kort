@@ -29,7 +29,7 @@ export default class Dispatcher {
     const workspace = this.findWorkspace(data.origin)
     if (!workspace) return `未找到${data.origin}相关配置`
     if (!workspace.branches.includes(data.branch))
-      return `未找到${data.origin}相关配置`
+      return `未找到${data.branch}相关配置`
     this.queue.push(data)
     if (!this.currentTask && !this.schedule?.isBusy) this.dispatch()
     return '任务已存入队列'
