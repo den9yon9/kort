@@ -1,11 +1,9 @@
-import Schedule from 'src/schedule'
 import { Task } from '../types'
 import { parseOrigin } from '../utils'
 import type Workspace from '../workspace/workspace'
 
 export default class Dispatcher {
   workspaces: Workspace[]
-  schedule?: Schedule
   currentTask: Task | undefined
   private queue: Task[] = []
 
@@ -31,7 +29,7 @@ export default class Dispatcher {
     if (!workspace.branches.includes(data.branch))
       return `未找到${data.branch}相关配置`
     this.queue.push(data)
-    if (!this.currentTask && !this.schedule?.isBusy) this.dispatch()
+    if (!this.currentTask) this.dispatch()
     return '任务已存入队列'
   }
 

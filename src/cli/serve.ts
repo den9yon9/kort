@@ -15,11 +15,9 @@ export default async function serve(
   if (cron) {
     const pattern = cron === true ? '0 */5 * * * *' : cron
     const schedule = new Schedule(pattern, dispatcher)
-    dispatcher.schedule = schedule
     app.context.schedule = schedule
     console.log(`定时任务已启动: ${green(pattern)}\n`)
   }
-
   app.listen(port)
   console.log(`\n服务已启动port: ${green(port)}`)
 }

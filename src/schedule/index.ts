@@ -3,13 +3,11 @@ import { $, getSHA1, shortSelector } from '../utils'
 import Dispatcher from '../dispatch'
 
 export default class Schedule {
-  isBusy = false
   constructor(time: string, dispatcher: Dispatcher) {
     new CronJob(
       time,
       async () => {
-        if (dispatcher.currentTask || this.isBusy) return
-        this.isBusy = true
+        if (dispatcher.currentTask) return
         await Promise.allSettled(
           dispatcher.workspaces.map(async (workspace) => {
             await $('git fetch', { cwd: workspace.source })
@@ -27,7 +25,6 @@ export default class Schedule {
             })
           })
         )
-        this.isBusy = false
         dispatcher.dispatch()
       },
       null,

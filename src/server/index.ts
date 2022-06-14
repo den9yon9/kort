@@ -33,7 +33,7 @@ app.use(async (ctx) => {
       return ctx.dispatcher.register({ origin, branch, selector, sender })
     },
     async 'POST /build'() {
-      return ctx.dispatcher.register({ ...body, sender: 'manual' })
+      return ctx.dispatcher.register({ sender: 'manual', ...body })
     }
   }[`${method} ${path}`]?.()
 })
