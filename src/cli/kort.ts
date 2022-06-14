@@ -6,7 +6,7 @@ import install from './install'
 import serve from './serve'
 import build from './build'
 
-const { origin, branch, selector = '"./*"', cron, port = 3010, _ } = argv
+const { origin, branch, selector = '"./**"', cron, port = 3010, _ } = argv
 
 function help() {
   console.log(`Version ${require('../../package.json').version}`)
