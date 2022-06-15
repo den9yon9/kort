@@ -7,9 +7,9 @@ export default class Schedule {
     new CronJob(
       time,
       async () => {
-        if (dispatcher.currentTask) return
         await Promise.allSettled(
           dispatcher.workspaces.map(async (workspace) => {
+            if (dispatcher.currentTask?.origin === workspace.origin) return
             await $('git fetch', { cwd: workspace.source })
             workspace.branches.map(async (branch) => {
               const base = await getSHA1(branch, workspace.source)
@@ -25,7 +25,6 @@ export default class Schedule {
             })
           })
         )
-        dispatcher.dispatch()
       },
       null,
       true
